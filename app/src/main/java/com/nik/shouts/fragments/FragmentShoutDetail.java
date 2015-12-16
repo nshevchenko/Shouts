@@ -5,19 +5,20 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.nik.shouts.R;
+import com.nik.shouts.adapters.FeedListAdapter;
 
 /**
  * Created by nik on 26/10/15.
  */
 
-public class FragmentShout extends Fragment {
+public class FragmentShoutDetail extends Fragment {
 
-    public static FragmentShout newInstance(int page, String title) {
-        FragmentShout fragmentShout = new FragmentShout();
-        return fragmentShout;
+    public static FragmentFeed newInstance(int page, String title) {
+        FragmentFeed fragmentFirst = new FragmentFeed();
+        return fragmentFirst;
     }
 
     @Override
@@ -28,9 +29,12 @@ public class FragmentShout extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_shout, container, false);
-        TextView text = (TextView) rootView.findViewById(R.id.section_label);
-        text.setText("Shout");
+        View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
+
+        ListView feedList = (ListView) rootView.findViewById(R.id.listFeeds);
+        feedList.setAdapter(new FeedListAdapter(this.getContext(), R.layout.feed_row));
+
         return rootView;
     }
 }
+

@@ -5,9 +5,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.nik.shouts.R;
+import com.nik.shouts.adapters.FeedListAdapter;
 
 /**
  * Created by nik on 26/10/15.
@@ -29,8 +31,10 @@ public class FragmentFeed extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_feed, container, false);
-        TextView text = (TextView) rootView.findViewById(R.id.section_label);
-        text.setText("Feed");
+
+        ListView feedList = (ListView) rootView.findViewById(R.id.listFeeds);
+        feedList.setAdapter(new FeedListAdapter(this.getContext(), R.layout.feed_row));
+
         return rootView;
     }
 }
