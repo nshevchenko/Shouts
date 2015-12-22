@@ -3,6 +3,7 @@ package com.nik.shouts.utils;
 import android.util.Log;
 
 import com.nik.shouts.interfaces.*;
+import com.nik.shouts.models.App;
 import com.nik.shouts.models.Shout;
 import com.nik.shouts.models.User;
 
@@ -82,7 +83,7 @@ public class ApiUtils {
             System.out.println("3");
             // create the user and add to app's data
             User tempNewUser = new User(Id, userName, password, nameAndSurname, friends, interests);
-            App.data.addUser(tempNewUser);
+            App.userCollections.addUser(tempNewUser);
         }
     }
 
@@ -113,7 +114,7 @@ public class ApiUtils {
             String locationCoordinates = jsonObj.getString("locationCoordinates");
             // create the user and add to app's data
             Shout tempNewShout = new Shout(ID, title, content, creatorId, participations, date, participationLimit, locationName, locationCoordinates);
-            App.data.addShout(tempNewShout);
+            App.userCollections.addShout(tempNewShout);
         }
     }
 }

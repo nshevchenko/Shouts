@@ -1,8 +1,7 @@
 package com.nik.shouts.auth;
 
-import com.nik.shouts.activities.LoginActivity;
 import com.nik.shouts.models.User;
-import com.nik.shouts.utils.App;
+import com.nik.shouts.models.App;
 import com.nik.shouts.utils.UserUtils;
 
 /**
@@ -16,7 +15,7 @@ public class Authorization {
 
         User loggedInUser = UserUtils.getUserByUserName(username);
         if(password.equals(loggedInUser.getPassword())){
-            App.data.setCurrentLoggedInUser(loggedInUser);
+            App.userCollections.setCurrentLoggedInUser(loggedInUser);
             return true;
         }
         return false;

@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.nik.shouts.R;
-import com.nik.shouts.utils.App;
+import com.nik.shouts.models.App;
 import com.nik.shouts.models.Shout;
 
 public class FeedListAdapter extends ArrayAdapter<Shout>{
@@ -22,7 +22,7 @@ public class FeedListAdapter extends ArrayAdapter<Shout>{
     
     public FeedListAdapter(Context ctx, int resourceId)
     {
-        super(ctx, resourceId, App.data.getShouts());
+        super(ctx, resourceId, App.userCollections.getShouts());
         resource = resourceId;
         inflater = LayoutInflater.from( ctx );
         context  = ctx;
@@ -32,7 +32,7 @@ public class FeedListAdapter extends ArrayAdapter<Shout>{
     public View getView ( int position, View convertView, ViewGroup parent ) 
     {
     	convertView = (RelativeLayout) inflater.inflate( resource, null );
-        Shout shout = App.data.getShouts().get(position);
+        Shout shout = App.userCollections.getShouts().get(position);
         System.out.println(position + " " + shout.getContent());
         if(position % 2 == 1)
         {

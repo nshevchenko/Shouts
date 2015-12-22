@@ -24,6 +24,7 @@ import org.w3c.dom.Text;
 
 public class FragmentUserDetails extends Fragment {
 
+
     public static FragmentUserDetails newInstance() {
         FragmentUserDetails fragmentUserDetails = new FragmentUserDetails();
         return fragmentUserDetails;
@@ -44,19 +45,20 @@ public class FragmentUserDetails extends Fragment {
 
         // read main rootView containing all elements
         View rootView = inflater.inflate(R.layout.fragment_user_detail, container, false);
-        setUpListViews(rootView, userId); // set up listview
+        setUpListViews(rootView, user); // set up listview
         findFragmentElements(rootView, user); // find elements in fragment
         return rootView;
     }
+
     /*
     * Set up the two lists view in this fragmetn (Last Activities and Last Shouts)
     * */
-    private void setUpListViews(View rootView, String userId){
+    private void setUpListViews(View rootView, User user) {
         ListView lastShoutsListView = (ListView) rootView.findViewById(R.id.lastShoutsListView);
-        lastShoutsListView.setAdapter(new UserDetailsLastShoutsListAdapter(this.getContext(), R.layout.feed_row, userId));
+        lastShoutsListView.setAdapter(new UserDetailsLastShoutsListAdapter(this.getContext(), R.layout.feed_row, user));
 
         ListView lastActivitiesListView  = (ListView) rootView.findViewById(R.id.lastActivitiesListView);
-        lastShoutsListView.setAdapter(new UserDetailsLastShoutsListAdapter(this.getContext(), R.layout.feed_row, userId));
+        lastActivitiesListView.setAdapter(new UserDetailsLastShoutsListAdapter(this.getContext(), R.layout.feed_row, user));
     }
 
     /*

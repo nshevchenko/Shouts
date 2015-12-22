@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.nik.shouts.R;
+import com.nik.shouts.adapters.SectionsPagerAdapter;
 import com.nik.shouts.fragments.FragmentFeed;
 import com.nik.shouts.fragments.FragmentMaps;
 import com.nik.shouts.fragments.FragmentUserDetails;
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 };
                 NewShoutFragment newShoutFragment = new NewShoutFragment();
                 newShoutFragment.setCallbackNewShoutCreated(apiNewShoutCallback);
-                openFragmentAsParent((Fragment)newShoutFragment);
+                openFragmentAsParent(newShoutFragment);
                 break;
             case R.id.searchEditText:
                 openActivityAsParent(SearchActivity.class);
@@ -147,40 +148,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            switch (position) {
-                case 0:
-                    return FragmentMaps.newInstance(0, Configurations.TABS[0]);
-                case 1:
-                    return FragmentFeed.newInstance(1, Configurations.TABS[1]);
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            // Show total pages.
-            return Configurations.PAGE_COUNT;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return Configurations.TABS[position];
-        }
-    }
 }

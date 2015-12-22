@@ -2,6 +2,8 @@ package com.nik.shouts.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.view.Menu;
@@ -9,15 +11,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.nik.shouts.R;
 import com.nik.shouts.auth.Authorization;
 import com.nik.shouts.interfaces.ApiRequestCallback;
-import com.nik.shouts.interfaces.HttpRequestCallback;
-import com.nik.shouts.models.Data;
+import com.nik.shouts.models.collections.ShoutsCollections;
+import com.nik.shouts.models.collections.UsersCollections;
 import com.nik.shouts.utils.ApiUtils;
-import com.nik.shouts.utils.App;
+import com.nik.shouts.models.App;
 import com.nik.shouts.utils.Configurations;
 
 /**
@@ -33,21 +36,26 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
             R.id.facebookLoginButton
     };
 
-    // animation
-    private boolean loginWindowIsUp;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        App.data = new Data();
-        App.data.init();
+        // set Initial data
+        setInitialData();
+        // find all elements in the acitivty
         findActivityElements();
     }
 
+    /**
+     * Set initial data of the application
+     */
+    public void setInitialData(){
+        // primary sections of the activity.
+        App.usersCollections = new UsersCollections();
+        App.shoutsCollections= new ShoutsCollections();
+        App.usersCollections.init();
+        App.shoutsCollections.init();
+    }
     //
     // Set up main elements/views inside the activity
     //
@@ -64,6 +72,10 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
         EditText password = (EditText) findViewById(R.id.passwordEditText);
         password.setSelected(false);
 
+        ImageView tempImageView = (ImageView) findViewById(R.id.emailImageView);
+        tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+        tempImageView = (ImageView) findViewById(R.id.passwordImageView);
+        tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
     }
 
 

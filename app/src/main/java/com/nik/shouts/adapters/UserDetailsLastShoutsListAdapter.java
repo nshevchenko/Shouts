@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.nik.shouts.R;
 import com.nik.shouts.models.Shout;
 import com.nik.shouts.models.User;
-import com.nik.shouts.utils.App;
+import com.nik.shouts.models.App;
 import com.nik.shouts.utils.ShoutsUtils;
 import com.nik.shouts.utils.UserUtils;
 
@@ -23,9 +23,9 @@ public class UserDetailsLastShoutsListAdapter extends ArrayAdapter<Shout>{
     private LayoutInflater inflater;
     private Context context;
 
-    public UserDetailsLastShoutsListAdapter(Context ctx, int resourceId, String userId)
+    public UserDetailsLastShoutsListAdapter(Context ctx, int resourceId, User user)
     {
-        super(ctx, resourceId, ShoutsUtils.getLastUserShouts(userId));
+        super(ctx, resourceId, user.getLastShoutsOfUser(10));
         resource = resourceId;
         inflater = LayoutInflater.from( ctx );
         context  = ctx;
@@ -35,8 +35,8 @@ public class UserDetailsLastShoutsListAdapter extends ArrayAdapter<Shout>{
     public View getView ( int position, View convertView, ViewGroup parent ) 
     {
     	convertView = (RelativeLayout) inflater.inflate( resource, null );
-        Shout shout = App.data.getShouts().get(position);
-        System.out.println(position + " " + shout.getContent());
+        Shout shout = App.shoutsCollections.getShouts().get(position);
+//        System.out.println(position + " " + shout.getContent());
         if(position % 2 == 1)
         {
             RelativeLayout bg = (RelativeLayout)convertView.findViewById(R.id.shoutMainContent);

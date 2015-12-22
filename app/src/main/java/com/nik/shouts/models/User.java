@@ -1,8 +1,5 @@
 package com.nik.shouts.models;
 
-import com.nik.shouts.utils.App;
-import com.nik.shouts.utils.UserUtils;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -72,6 +69,41 @@ public class User {
             return "";
         }
     }
+
+    /**
+     * get the last shouts of the user with limit
+     * @return
+     */
+    public ArrayList<Shout> getLastShoutsOfUser(int limitList){
+        ArrayList<Shout> userShouts = new ArrayList<Shout>();
+
+        for(Shout shout : App.shoutsCollections.getShouts()){
+            if(getId().equals(shout.getCreator().getId())) {
+                userShouts.add(shout);
+                if (userShouts.size() == limitList)
+                    break;
+            }
+        }
+        return userShouts;
+    }
+
+    /**
+     * get the last accepted shouts by the user with limit
+     * @return
+     */
+    public ArrayList<Shout> getLastActivitiesOfUser(int limitList){
+        ArrayList<Shout> usersLastAcceptedShouts = new ArrayList<Shout>();
+        for(Shout shout : App.shoutsCollections.getShouts()){
+            if(shout.isUserAParticipant(getId())){
+                usersLastAcceptedShouts.add(shout);
+                if (usersLastAcceptedShouts.size() == limitList)
+                    break;
+            }
+
+        }
+        return usersLastAcceptedShouts;
+    }
+
     public String getId() {
         return id;
     }
