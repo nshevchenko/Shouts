@@ -15,7 +15,7 @@ public class Authorization {
 
         User loggedInUser = UserUtils.getUserByUserName(username);
         if(password.equals(loggedInUser.getPassword())){
-            App.userCollections.setCurrentLoggedInUser(loggedInUser);
+            App.usersCollections.setCurrentLoggedInUser(loggedInUser);
             return true;
         }
         return false;

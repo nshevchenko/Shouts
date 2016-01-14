@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.common.api.Api;
 import com.nik.shouts.R;
 import com.nik.shouts.auth.Authorization;
 import com.nik.shouts.interfaces.ApiRequestCallback;
@@ -133,7 +134,6 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
                 return; // don't login if credentials are wrong
             }
         }
-
         // LOGIN CORRECT
         // change UI
         findViewById(R.id.usernameEditText).setVisibility(View.GONE);
@@ -147,11 +147,13 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
         ApiRequestCallback apiCallback = new ApiRequestCallback() {
             @Override
             public void onRequestComplete(String result) {
+                System.out.println(result);
+                ApiUtils.parseAppData(result);
                 openMainActivity(appMode);
             }
         };
         // download app data with the related callback
-        ApiUtils.downloadAppData(apiCallback);
+        ApiUtils.downloadInitialAppData(apiCallback);
     }
 
 

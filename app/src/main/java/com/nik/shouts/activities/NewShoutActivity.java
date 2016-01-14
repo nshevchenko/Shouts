@@ -1,24 +1,22 @@
-package com.nik.shouts.fragments;
+package com.nik.shouts.activities;
 
-import android.support.v4.app.Fragment;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.nik.shouts.R;
-import com.nik.shouts.interfaces.NewShoutActivityCallback;
 import com.nik.shouts.models.Shout;
 import com.nik.shouts.models.App;
 import com.nik.shouts.utils.Configurations;
-import com.nik.shouts.utils.Errors;
+import com.nik.shouts.utils.Messages;
 import com.nik.shouts.utils.MapUtils;
 
 import java.util.Date;
@@ -27,8 +25,7 @@ import java.util.Date;
  * Created by nik on 23/11/15.
  */
 
-public class NewShoutFragment extends Fragment implements View.OnClickListener {
-
+public class NewShoutActivity extends Activity implements View.OnClickListener {
 
     // Activity buttons to received the callback for
     private int[] activity_buttons = {
@@ -54,79 +51,69 @@ public class NewShoutFragment extends Fragment implements View.OnClickListener {
     private MapView mapView;
     private GoogleMap googleMap;
 
-
     // layout view of the fragment (accessed for validation purposes later)
-    private View rootView;
-
-
-    // callback to the main activity with refreshing the map with the new shout
-    private NewShoutActivityCallback apiNewShoutCreatedCallback;
-
+//    private View rootView;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_new_shout, container, false);
-        setUpGoogleMap(rootView, savedInstanceState);
-        findActivityElements(rootView);
-        return rootView;
+        setContentView(R.layout.activity_new_shout);
+        setUpGoogleMap(savedInstanceState);
+        findActivityElements();
     }
 
     /**
      * create Google view map
-     * @param rootView
      * @param savedInstanceState
      */
-    private void setUpGoogleMap(View rootView, Bundle savedInstanceState){
-        mapView = (MapView) rootView.findViewById(R.id.map);
+    private void setUpGoogleMap(Bundle savedInstanceState){
+        mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
-        googleMap = MapUtils.initGoogleMap(mapView, this.getActivity());
+        googleMap = MapUtils.initGoogleMap(mapView, this);
     }
 
 
-    private void findActivityElements(View rootView){
-        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+    private void findActivityElements(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         // assign listener to all buttons in the activity
         for (int i = 0; i < activity_buttons.length; i++) {
-            Button activity_button = (Button) rootView.findViewById(activity_buttons[i]);
+            Button activity_button = (Button) findViewById(activity_buttons[i]);
             activity_button.setOnClickListener(this);
         }
-        FloatingActionButton button = (FloatingActionButton) rootView.findViewById(R.id.search);
+        FloatingActionButton button = (FloatingActionButton) findViewById(R.id.search);
         button.setOnClickListener(this);
     }
+
 
     @Override
     public void onClick(View view) {
         System.out.println("button clicked " + view.getId());
         switch (view.getId()) {
-            case R.id.create:
-                break;
-
             case R.id.doneButton:
                 //validate shout
                 if( ! validateNewShout())
                     return;
+                // read and upload shout
+                readAndUploadShout();
+                break;
 
-                // upload shout
-                Shout newShout = generateShoutFromScreen();
-                App.shoutsCollections.addShout(newShout);
-                apiNewShoutCreatedCallback.onRequestCompleteNewShout(newShout);
-
-                // download app data with the related callback
-
-//                Intent intent = NavUtils.getParentActivityIntent(this);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//                NavUtils.navigateUpTo(this, intent);
-                    getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
-//                finish();
+            case R.id.search:
                 break;
         }
+    }
+
+    /**
+     *
+     */
+    private void readAndUploadShout() {
+        Shout newShout = generateShoutFromScreen();
+        Intent intent = new Intent();
+        intent.putExtra(Configurations.REQUEST_STRING_NEW_SHOUT_ID, newShout.getId());
+        setResult(RESULT_OK, intent);
+        finish();
+//        ((MainActivity)getActivity()).updateMapAndListFeed(newShout);
+//        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
     }
 
     /**
@@ -135,11 +122,12 @@ public class NewShoutFragment extends Fragment implements View.OnClickListener {
      */
     private boolean validateNewShout(){
         Snackbar snackbar = null;
+        View rootView = findViewById(R.id.main_content_layout);
         if( Configurations.checkEditTextIsEmpty(rootView, R.id.titleEditText))
-            snackbar = Snackbar.make(rootView.findViewById(R.id.main_content), Errors.newShoutTitleEditTextRequired, Snackbar.LENGTH_SHORT);
+            snackbar = Snackbar.make(rootView, Messages.ERROR_NEW_SHOUT_TITLE_REQUIRED, Snackbar.LENGTH_SHORT);
 
         if( Configurations.checkEditTextIsEmpty(rootView, R.id.descriptionEditText))
-            snackbar = Snackbar.make(rootView.findViewById(R.id.main_content), Errors.newShoutDescriptionEditTextRequired, Snackbar.LENGTH_SHORT);
+            snackbar = Snackbar.make(rootView, Messages.ERROR_NEW_SHOUT_DESCRIPTION_REQUIRED, Snackbar.LENGTH_SHORT);
 
 //        String dateStr = findViewById(R.id.dateEditText)
 //        if( Configurations.validateDateInThePast(findViewById(R.id.dateEditText)))
@@ -159,20 +147,20 @@ public class NewShoutFragment extends Fragment implements View.OnClickListener {
      */
     private Shout generateShoutFromScreen(){
         // read title
-        EditText tempEditText = (EditText) rootView.findViewById(R.id.titleEditText);
+        EditText tempEditText = (EditText) findViewById(R.id.titleEditText);
         String title = tempEditText.getText().toString();
 
         // read content
-        tempEditText = (EditText) rootView.findViewById(R.id.descriptionEditText);
+        tempEditText = (EditText) findViewById(R.id.descriptionEditText);
         String content = tempEditText.getText().toString();
 
         // get date
-        tempEditText = (EditText) rootView.findViewById(R.id.dateEditText);
+        tempEditText = (EditText) findViewById(R.id.dateEditText);
         String dateStr = tempEditText.getText().toString();
         Date date = null; // get date from str
 
         // get participation limit people
-        tempEditText = (EditText) rootView.findViewById(R.id.limitPeopleEditText);
+        tempEditText = (EditText) findViewById(R.id.limitPeopleEditText);
         String participationLimitStr = tempEditText.getText().toString();
         int participationLimit = Integer.parseInt(participationLimitStr);
 
@@ -181,15 +169,7 @@ public class NewShoutFragment extends Fragment implements View.OnClickListener {
         String locationName = "";
         String locationCoordinates = "";
 
-        Shout newShout = new Shout(title, content, creatorId, date, participationLimit, locationName, locationCoordinates);
-        return newShout;
+        return App.shoutsCollections.createNewShout(
+                title, content, creatorId, date, participationLimit, locationName, locationCoordinates);
     }
-
-    /**
-     *    Asssign callback from the parent activitiy when the shout is created
-     */
-    public void setCallbackNewShoutCreated(NewShoutActivityCallback apiNewShoutCreatedCallback) {
-        this.apiNewShoutCreatedCallback = apiNewShoutCreatedCallback;
-    }
-
 }

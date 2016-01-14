@@ -22,7 +22,7 @@ public class FeedListAdapter extends ArrayAdapter<Shout>{
     
     public FeedListAdapter(Context ctx, int resourceId)
     {
-        super(ctx, resourceId, App.userCollections.getShouts());
+        super(ctx, resourceId, App.shoutsCollections.getShouts());
         resource = resourceId;
         inflater = LayoutInflater.from( ctx );
         context  = ctx;
@@ -32,7 +32,7 @@ public class FeedListAdapter extends ArrayAdapter<Shout>{
     public View getView ( int position, View convertView, ViewGroup parent ) 
     {
     	convertView = (RelativeLayout) inflater.inflate( resource, null );
-        Shout shout = App.userCollections.getShouts().get(position);
+        Shout shout = App.shoutsCollections.getShouts().get(position);
         System.out.println(position + " " + shout.getContent());
         if(position % 2 == 1)
         {
@@ -43,11 +43,15 @@ public class FeedListAdapter extends ArrayAdapter<Shout>{
         View tempShoutViewObject = (TextView)convertView.findViewById(R.id.username);
 //        ((TextView)tempShoutViewObject).setText(shout.getUser().getNameAndSurname());
 
+        tempShoutViewObject = (TextView)convertView.findViewById(R.id.title);
+        ((TextView)tempShoutViewObject).setText(shout.getTitle());
+
         tempShoutViewObject = (TextView)convertView.findViewById(R.id.content);
         ((TextView)tempShoutViewObject).setText(shout.getContent());
 
         tempShoutViewObject  = (TextView)convertView.findViewById(R.id.date);
-        ((TextView)tempShoutViewObject).setText(shout.getDate().toString());
+        if(shout.getDate() != null)
+            ((TextView)tempShoutViewObject).setText(shout.getDate().toString());
 
         tempShoutViewObject  = (TextView)convertView.findViewById(R.id.location);
         ((TextView)tempShoutViewObject).setText(shout.getLocationName());

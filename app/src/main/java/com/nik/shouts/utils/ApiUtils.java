@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -20,33 +22,25 @@ import java.util.Date;
 
 public class ApiUtils {
 
-//    public static void getFromApi(String request, ){
-//        new HttpRequestCallback(new OnRequestFinished()
-//        {
-//            @Override
-//            public void onRequestComplete(String feeds)
-//            {
-//                //do whatever you want to do with the feeds
-//            }
-//        }).execute("http://enterurlhere.com");
-//    }
 
-    /*
-    * Download main data for the user's login = shouts and users(friends)
-    */
-    public static void downloadAppData(final ApiRequestCallback apiFinalCallback) {
+    // PARSE INITIAL APPLICATION DATA
+
+
+
+    /**
+     * Download main data for the user's login = shouts to show and users(friends)
+     * @param apiFinalCallback
+     */
+    public static void downloadInitialAppData(final ApiRequestCallback apiFinalCallback) {
         // download users
-        HttpRequestCallback httpRequest = new HttpRequestCallback(new ApiRequestCallback() {
-            @Override
-            public void onRequestComplete(String result) {
-                System.out.println(result);
-                parseAppData(result);
-                apiFinalCallback.onRequestComplete("");
-            }
-        }, "GET");
+        HttpRequestCallback httpRequest = new HttpRequestCallback(apiFinalCallback, "GET");
         httpRequest.execute("http://lionsrace.altervista.org/apiShouts.php");
     }
 
+    /**
+     * Parse the initial downloaded application data from server
+     * @param jsonDataStr
+     */
     public static void parseAppData(String jsonDataStr) {
         try {
             System.out.println("result " + jsonDataStr);
@@ -57,11 +51,10 @@ public class ApiUtils {
         } catch (JSONException jsonEx) {
             Log.d("LOG", "Json parsing error");
         }
-
     }
 
     /**
-     * Prase users json object
+     * Prase users initial json object
      * @param mainObject
      * @throws JSONException
      */
@@ -83,12 +76,12 @@ public class ApiUtils {
             System.out.println("3");
             // create the user and add to app's data
             User tempNewUser = new User(Id, userName, password, nameAndSurname, friends, interests);
-            App.userCollections.addUser(tempNewUser);
+            App.usersCollections.addUser(tempNewUser);
         }
     }
 
     /**
-     * Parse shouts json data
+     * Parse shouts initial data json data
      * @param mainObject
      * @throws JSONException
      */
@@ -104,7 +97,11 @@ public class ApiUtils {
 
             String creatorId = jsonObj.getString("creatorID");
             String participationsStr = jsonObj.getString("participationsIDs");
+
             String[] participations = participationsStr.split(",");
+            ArrayList<String> participationsIDs = new ArrayList<>();
+            for (String participant : participations)
+                participationsIDs.add(participant);
 
             String dateStr = jsonObj.getString("date");
             Date date = Calendar.getInstance().getTime();
@@ -113,8 +110,17 @@ public class ApiUtils {
             String locationName = jsonObj.getString("locationName");
             String locationCoordinates = jsonObj.getString("locationCoordinates");
             // create the user and add to app's data
-            Shout tempNewShout = new Shout(ID, title, content, creatorId, participations, date, participationLimit, locationName, locationCoordinates);
-            App.userCollections.addShout(tempNewShout);
+            App.shoutsCollections.createNewShout(title, content, creatorId, participationsIDs, date, participationLimit, locationName, locationCoordinates);
+
         }
+    }
+
+
+
+    // UPLOAD A NEW SHOUT
+
+    public static void uploadNewShout(ApiRequestCallback uploadCallback, String jsonNewShout) {
+        HttpRequestCallback httpRequest = new HttpRequestCallback(uploadCallback, "POST", jsonNewShout);
+        httpRequest.execute("http://lionsrace.altervista.org/apiShouts.php");
     }
 }

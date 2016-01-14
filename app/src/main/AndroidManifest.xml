@@ -30,7 +30,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".fragments.NewShoutFragment"
+            android:name=".activities.NewShoutActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName="com.nik.shouts.activities.MainActivity" >

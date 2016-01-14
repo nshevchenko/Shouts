@@ -19,7 +19,11 @@ public class User {
     private String[] friendsIDs;
     private String[] interests;
 
-    // dynamic objects
+
+    public User() {
+        userName = "Guest";
+        nameAndSurname = "Guest User";
+    }
 
     public User(String id, String userName, String password, String nameAndSurname, String[] friendsIDs, String[] interests) {
         this.id = id;

@@ -2,9 +2,12 @@ package com.nik.shouts.models;
 
 import com.nik.shouts.utils.UserUtils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -13,11 +16,11 @@ import java.util.Date;
 
 public class Shout {
 
-    private String ID;
+    private String id;
     private String content;
     private String title;
     private String creatorId;
-    private String[] participationsIDs;
+    private ArrayList<String> participationsIDs;
     private Date date;
     private String locationName;
     private int participationLimit;
@@ -25,26 +28,25 @@ public class Shout {
 
     /**
      * Create shout object with all parameters
-     * @param ID
+     * @param id
      * @param title
      * @param content
      * @param creatorId
-     * @param participationsIDs
      * @param date
      * @param participationLimit
      * @param locationName
      * @param locationCoordinates
      */
-    public Shout(String ID, String title, String content, String creatorId, String[] participationsIDs, Date date, int participationLimit, String locationName, String locationCoordinates) {
-        this.ID = ID;
+    public Shout(String id, String title, String content, String creatorId, Date date, int participationLimit, String locationName, String locationCoordinates) {
+        this.id = id;
         this.content = content;
         this.title = title;
         this.creatorId = creatorId;
-        this.participationsIDs = participationsIDs;
         this.date = date;
         this.participationLimit = participationLimit;
         this.locationName = locationName;
         this.locationCoordinates = locationCoordinates;
+        this.participationsIDs = new ArrayList<>();
     }
 
     /**
@@ -65,14 +67,30 @@ public class Shout {
         this.participationLimit = participationLimit;
         this.locationName = locationName;
         this.locationCoordinates = locationCoordinates;
+        this.participationsIDs = new ArrayList<>();
     }
+
+
+    public Shout(String id, String title, String content, String creatorId, Date date, int participationLimit, ArrayList<String> participationsIDs, String locationName, String locationCoordinates) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.creatorId = creatorId;
+        this.date = date;
+        this.participationsIDs = participationsIDs;
+        this.participationLimit = participationLimit;
+        this.locationName = locationName;
+        this.locationCoordinates = locationCoordinates;
+        this.participationsIDs = new ArrayList<>();
+    }
+
 
     /*
     * CHECK IF USER IS A PARTICIPANT OF THIS EVENT
     * */
     public boolean isUserAParticipant(String userId){
-        for(int i = 0; i < participationsIDs.length; i++){
-            if(userId.equals(participationsIDs[i]))
+        for(int i = 0; i < participationsIDs.size(); i++){
+            if(userId.equals(participationsIDs.get(i)))
                 return true;
         }
         return false;
@@ -83,23 +101,41 @@ public class Shout {
      * @return json string object
      */
     public String toJSON(){
-        JSONObject jsonObject= new JSONObject();
+
+        JSONObject resultJson = new JSONObject();
         try {
-            jsonObject.put("title", getTitle());
-            jsonObject.put("content", getContent());
-            jsonObject.put("$creator", getCreator().getId());
+            JSONObject newShoutJson = new JSONObject();
+            newShoutJson.put("title", getTitle());
+            newShoutJson.put("content", getContent());
+
+//            if(getCreator() != null)
+//                newShoutJson.put("creator", getCreator().getId());
+
             System.out.println("particitionaption ids " + getParticipationsIDs().toString());
-            jsonObject.put("participations", getParticipationsIDs().toString());
-            jsonObject.put("locationCoordinates", getLocationCoordinates());
-            jsonObject.put("locationName", getLocationName());
-            jsonObject.put("participationLimit", getParticipationLimit());
-            return jsonObject.toString();
+            newShoutJson.put("creatorID", "Guest");
+            newShoutJson.put("participationsIDs", getParticipationsIDs().toString());
+            newShoutJson.put("date", "Today");
+            newShoutJson.put("locationCoordinates", getLocationCoordinates());
+            newShoutJson.put("locationName", getLocationName());
+            newShoutJson.put("participationLimit", getParticipationLimit());
+            resultJson.put("shout", newShoutJson);
+            return resultJson.toString();
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             return "";
         }
     }
+
+    /**
+     * Add a new participant ID to this shout
+     * @param user
+     */
+    public void addNewParticipant(User user){
+        participationsIDs.add(user.getId());
+    }
+
+
     // GETTERS
 
     public int getParticipationLimit(){
@@ -110,7 +146,7 @@ public class Shout {
         return UserUtils.getUserById(creatorId);
     }
 
-    public String[] getParticipationsIDs() {
+    public ArrayList<String> getParticipationsIDs() {
         return participationsIDs;
     }
 
@@ -122,8 +158,8 @@ public class Shout {
         return creatorId;
     }
 
-    public String getID() {
-        return ID;
+    public String getId() {
+        return id;
     }
 
     public String getContent() {

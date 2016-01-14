@@ -13,7 +13,7 @@
             android:layout_weight="0.1"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/imageView"
+            android:id="@+id/userProfilePicture"
             android:background="@drawable/common_google_signin_btn_icon_light_pressed"
             android:layout_margin="5dp" />
 
@@ -24,7 +24,7 @@
             android:id="@+id/username"
             android:layout_gravity="left"
             android:layout_marginTop="10dp"
-            android:layout_toRightOf="@+id/imageView"
+            android:layout_toRightOf="@+id/userProfilePicture"
             android:textSize="12sp" />
 
         <TextView
@@ -48,16 +48,15 @@
             android:textSize="18sp" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="asdfasdf asdf asfd asdf asdf ..."
             android:id="@+id/content"
             android:layout_marginLeft="10dp"
-            android:layout_weight="0.1"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="false"
             android:layout_marginBottom="10dp"
-            android:visibility="gone" />
+            android:layout_above="@+id/title" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -66,8 +65,10 @@
             android:id="@+id/location"
             android:layout_gravity="left"
             android:layout_marginRight="10dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="10dp" />
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentEnd="false"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@+id/date"
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
 </RelativeLayout>

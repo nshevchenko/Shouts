@@ -22,10 +22,19 @@ public class Configurations {
     public static final String[] TABS = {"MAP", "FEED"};
 
     public static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
+
     // LOGIN MODES AVAILABLE IN THE APP
     public static final int APP_MODE_FACEBOOK_LOGIN = 0;
     public static final int APP_MODE_USERNAME_LOGIN = 1;
     public static final int APP_MODE_TRY_APP_MODE   = 2;
+
+
+    // REQUEST CODES FOR OPENING PARENT ACTIVITIES
+    public static final int REQUEST_CODE_PARENT_NEW_SHOUT_ACTIVITIY = 1;
+    public static final int REQUEST_CODE_PARENT_NEW_SEARCH_ACTIVITIY = 2;
+
+    public static final String REQUEST_STRING_NEW_SHOUT_ID = "new_created_shout_id";
+    public static final String REQUEST_STRING_NEW_SEARCH_ID = "new_search_id";
 
 
     // INIT SOME DUMB DATA

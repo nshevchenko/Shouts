@@ -1,13 +1,10 @@
 package com.nik.shouts.activities;
 
-import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,13 +15,14 @@ import android.widget.EditText;
 
 import com.nik.shouts.R;
 import com.nik.shouts.adapters.SectionsPagerAdapter;
-import com.nik.shouts.fragments.FragmentFeed;
-import com.nik.shouts.fragments.FragmentMaps;
 import com.nik.shouts.fragments.FragmentUserDetails;
-import com.nik.shouts.fragments.NewShoutFragment;
-import com.nik.shouts.interfaces.NewShoutActivityCallback;
+import com.nik.shouts.interfaces.ApiRequestCallback;
+import com.nik.shouts.models.App;
 import com.nik.shouts.models.Shout;
+import com.nik.shouts.utils.ApiUtils;
 import com.nik.shouts.utils.Configurations;
+import com.nik.shouts.utils.MapUtils;
+import com.nik.shouts.utils.Messages;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -64,9 +62,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tabLayout.setupWithViewPager(mViewPager);
     }
 
-    /*
-    *   Assign listener to all buttons in the activity
-    */
+    /**
+     * Assign listener to all buttons in the activity
+     */
     private void findActivityElements() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.create);
         fab.setOnClickListener(this);
@@ -103,50 +101,62 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.create:
-                NewShoutActivityCallback apiNewShoutCallback = new NewShoutActivityCallback() {
-                    @Override
-                    public void onRequestCompleteNewShout(Shout newShout) {
-                        updateMapAndListFeed(newShout);
-                    }
-                };
-                NewShoutFragment newShoutFragment = new NewShoutFragment();
-                newShoutFragment.setCallbackNewShoutCreated(apiNewShoutCallback);
-                openFragmentAsParent(newShoutFragment);
+                App.openActivityAsParent(this, NewShoutActivity.class, Configurations.REQUEST_CODE_PARENT_NEW_SHOUT_ACTIVITIY);
                 break;
             case R.id.searchEditText:
-                openActivityAsParent(SearchActivity.class);
+                App.openActivityAsParent(this, SearchActivity.class, Configurations.REQUEST_CODE_PARENT_NEW_SEARCH_ACTIVITIY);
                 break;
             case R.id.userDetails:
-                openFragmentAsParent(new FragmentUserDetails());
+                App.openFragmentAsParent(this, new FragmentUserDetails());
                 break;
         }
     }
 
-    /*
-    * OPEN NEW FRAGMENT PARENT ACTIVITY
-    */
-    public void openFragmentAsParent(Fragment newFragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.main_content, newFragment);
-        transaction.commit();
-    }
+    /**
+     * Receive results from parent activities
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("callback from parent (y)");
+        switch(requestCode){
+            case Configurations.REQUEST_CODE_PARENT_NEW_SEARCH_ACTIVITIY:
 
-    /*
-    * OPEN NEW SHOUT PARENT ACTIVITY
-    */
+                break;
 
-    private void openActivityAsParent(Class newIntentClass){
-        Intent newIntent = new Intent(this, newIntentClass);
-        if(newIntentClass == NewShoutFragment.class) {
-
+            case Configurations.REQUEST_CODE_PARENT_NEW_SHOUT_ACTIVITIY:
+                if(resultCode == RESULT_OK) {
+                    String newShoutId = data.getStringExtra(Configurations.REQUEST_STRING_NEW_SHOUT_ID);
+                    updateMapAndListFeed(newShoutId);
+                }
+                break;
         }
-        startActivity(newIntent);
     }
 
-    private void updateMapAndListFeed(Shout newShout){
-        System.out.println("update Map And Feed with new Shout");
+    /**
+     * Update the Map and List feed in the main activity
+     * @param newShoutIdStr
+     */
+    public void updateMapAndListFeed(String newShoutIdStr){
+        int newShoutId = Integer.parseInt(newShoutIdStr);
+        Shout newShout = App.shoutsCollections.getShoutById(newShoutId);
+        System.out.println("Update Map And Feed with new Shout .. " + newShout.getId() + " " + newShout.getContent());
+
+        // update list view in the user's list
+        mSectionsPagerAdapter.notifyDataSetChanged();
+//        MapUtils.updateMap();
+//        this.getSupportFragmentManager().
+        ApiRequestCallback apiCallback = new ApiRequestCallback() {
+            @Override
+            public void onRequestComplete(String result) {
+                System.out.println("fuck me: "+ result);
+//                Snackbar snackbar = Snackbar.make(findViewById(R.id.main_content_layout), Messages.DONE_UPLOAD_NEW_SHOUT, Snackbar.LENGTH_SHORT);
+//                snackbar.show();
+            }
+        };
+        // download app data with the related callback
+        ApiUtils.uploadNewShout(apiCallback, newShout.toJSON());
     }
-
-
-
 }

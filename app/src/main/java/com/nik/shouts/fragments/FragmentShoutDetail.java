@@ -16,6 +16,7 @@ import com.nik.shouts.adapters.FeedListAdapter;
 
 public class FragmentShoutDetail extends Fragment {
 
+
     public static FragmentFeed newInstance(int page, String title) {
         FragmentFeed fragmentFirst = new FragmentFeed();
         return fragmentFirst;
@@ -35,6 +36,10 @@ public class FragmentShoutDetail extends Fragment {
         feedList.setAdapter(new FeedListAdapter(this.getContext(), R.layout.feed_row));
 
         return rootView;
+    }
+
+    private void findElements() {
+
     }
 }
 

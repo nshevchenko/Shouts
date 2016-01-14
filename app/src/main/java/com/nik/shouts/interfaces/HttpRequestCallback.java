@@ -3,17 +3,9 @@ package com.nik.shouts.interfaces;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Log;
-
-import com.nik.shouts.interfaces.ApiRequestCallback;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,21 +17,24 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class HttpRequestCallback extends AsyncTask<String, Void, String>
 {
     private String requestType = "";
     private ApiRequestCallback apiRequestCallback;
-    private JSONObject postJsonObj;
+    private String postJsonObj;
 
     public HttpRequestCallback(ApiRequestCallback apiRequestCallback, String requestType) {
         this.apiRequestCallback = apiRequestCallback;
         this.requestType = requestType;
     }
 
-    public HttpRequestCallback(ApiRequestCallback apiRequestCallback, String requestType, JSONObject postJsonObj) {
+    public HttpRequestCallback(ApiRequestCallback apiRequestCallback, String requestType, String postJsonObj) {
         this.apiRequestCallback = apiRequestCallback;
         this.requestType = requestType;
         this.postJsonObj = postJsonObj;
@@ -55,7 +50,7 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
     protected String doInBackground(String... urls)
     {
         String result = "";
-
+        BufferedReader br = null;
         try {
             URL url = new URL(urls[0]);
 
@@ -64,7 +59,7 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
                     // enter your url here which to download
                     URLConnection conn = url.openConnection();
 //                    // open the stream and put it into BufferedReader
-                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                     String inputLine = "";
                     while ((inputLine = br.readLine()) != null) {
                         System.out.println(inputLine);
@@ -73,27 +68,28 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
                     br.close();
                     break;
                 case "POST":
-                    HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("POST");
                     connection.setDoInput(true);
                     connection.setDoOutput(true);
-
-                    Uri.Builder builder = new Uri.Builder()
-                            .appendQueryParameter("parametros", postJsonObj.toString());
-
-                    String query = builder.build().getEncodedQuery();
-                    connection.setFixedLengthStreamingMode(query.getBytes().length);
+                    connection.setConnectTimeout(5000);
+                    connection.setReadTimeout(5000);
+                    connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
                     OutputStream os = connection.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(
                             new OutputStreamWriter(os, "UTF-8"));
-                    writer.write(query);
+
+                    writer.write(URLEncoder.encode(postJsonObj, "UTF-8"));
                     writer.flush();
                     writer.close();
                     os.close();
-
                     connection.connect();
 
+                    if(connection.getResponseCode() == 200){
+                        System.out.println("200");
+                    }
+                    connection.disconnect();
                     break;
             }
         }

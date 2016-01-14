@@ -9,7 +9,5 @@ import java.io.Serializable;
  */
 
 public interface ApiRequestCallback extends Serializable {
-
         public void onRequestComplete(String result);
-
 }

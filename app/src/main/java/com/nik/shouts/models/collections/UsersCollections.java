@@ -33,7 +33,7 @@ public class UsersCollections {
      * @return
      */
     public User getCurrentlyLoggedInUser(){
-        return currentlyLoggedInUser;
+        return currentlyLoggedInUser == null ? new User() : currentlyLoggedInUser;
     }
 
     public void setCurrentLoggedInUser(User user) {
