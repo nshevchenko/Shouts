@@ -10,12 +10,17 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.nik.shouts.models.Place;
 
 /**
  * Created by nik on 12/12/15.
  */
 
 public class MapUtils {
+
+    private static Place lastKnownPlace;
+
+//    public static
 
     /**
      * Get Latitude and Longitude Objecvt from a location object
@@ -34,13 +39,13 @@ public class MapUtils {
      * @param activity
      * @return
      */
+
     public static GoogleMap initGoogleMap(MapView mapView, Activity activity) {
         GoogleMap googleMap = mapView.getMap();
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         googleMap.setMyLocationEnabled(true);
 
         MapsInitializer.initialize(activity);
-
         // Updates the location and zoom of the MapView
 //        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(43.1, -87.9), 10);
 //        googleMap.moveCamera(cameraUpdate);
@@ -65,12 +70,5 @@ public class MapUtils {
                 .tilt(30)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
-
-    /**
-     * get user location
-     */
-    public static void getCurrentUserLocation(){
-
     }
 }

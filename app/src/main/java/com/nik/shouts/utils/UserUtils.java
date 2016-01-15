@@ -9,9 +9,9 @@ import com.nik.shouts.models.User;
 
 public class UserUtils {
 
-    public static User getUserByUserName(String userName) {
+    public static User getUserByUserName(String email) {
         for(User user : App.usersCollections.getUsers())
-            if(user.getUserName().equals(user))
+            if(user.getEmail().equals(email))
                 return user;
         return null;
     }

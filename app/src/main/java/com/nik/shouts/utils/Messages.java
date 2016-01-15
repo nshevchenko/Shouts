@@ -16,6 +16,15 @@ public class Messages {
     public static String ERROR_NEW_SHOUT_TIME_REQUIRED = "Time is required";
     public static String ERROR_DATE_IN_THE_PAST = "Date is in the past";
 
+    // NEW USER SCREEN MESSAGES
+
+    public static String ERROR_NEW_USER_NAME_REQUIRED = "Name is required";
+    public static String ERROR_NEW_SHOUT_EMAIL_REQUIRED = "Email is required";
+    public static String ERROR_NEW_SHOUT_PASSWORD_REQUIRED = "Password is required";
+    public static String ERROR_PASSWORD_TOO_SHORT = "Your password is too short";
+    public static String ERROR_UPLOADING_NEW_USER = "Sorry, technical problems are getting fixed... :)";
+
+
     // UPLAOD NEW SHOUT MESSAGES
 
     public static String ERROR_UPLOAD_NEW_SHOUT = "Error uploading your shout";

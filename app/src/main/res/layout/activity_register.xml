@@ -8,10 +8,10 @@
     tools:context=".activities.LoginActivity"
     android:background="#fff6f6">
 
-
+    
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="300dp"
+        android:layout_height="400dp"
         android:id="@+id/topLayout">
         <ImageView
             android:layout_width="fill_parent"
@@ -86,10 +86,46 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/nameAndSurnameLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_below="@+id/usernameLayout">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/nameAndSurnameImageView"
+                    android:src="@android:drawable/sym_def_app_icon"
+                    android:scaleType="centerCrop"
+                    android:layout_marginTop="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="5dp"
+                    android:layout_centerVertical="true" />
+
+                <EditText
+                    android:id="@+id/nameAndSurnameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text|textEmailAddress"
+                    android:hint="Name"
+                    android:textAlignment="textStart"
+                    android:layout_marginTop="10dp"
+                    android:theme="@style/WhiteEditTextTheme"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:visibility="visible"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_toRightOf="@+id/nameAndSurnameImageView"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/passwordLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/usernameLayout"
+                android:layout_below="@+id/nameAndSurnameLayout"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp">
 
@@ -136,34 +172,20 @@
         android:id="@+id/loginWindow"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="300dp">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:max="500"
-            android:progress="0"
-            android:progressDrawable="@drawable/circular"
-            android:layout_gravity="center_horizontal"
-            android:visibility="gone" />
+        android:layout_marginTop="400dp">
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="LOGIN"
+            android:text="REGISTER"
             android:background="@drawable/round_corners_button"
             android:id="@+id/doneButton"
             android:layout_gravity="center_horizontal"
             android:textColor="@color/colorPrimaryDark"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="15dp"
             android:visibility="visible"
-            android:layout_below="@+id/passwordLayout" />
+            android:layout_below="@+id/loginButtonLayout" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -172,9 +194,8 @@
             android:layout_gravity="center_horizontal"
             android:showDividers="end"
             android:weightSum="1.0"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:gravity="center"
-            android:layout_below="@+id/doneButton"
             android:id="@+id/loginButtonLayout">
 
             <View
@@ -209,44 +230,6 @@
                 android:layout_gravity="center_vertical" />
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|bottom"
-            android:showDividers="end"
-            android:weightSum="1.0"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_below="@+id/loginButtonLayout">
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="FACEBOOK"
-                android:layout_weight="0.5"
-                android:id="@+id/facebookLoginButton"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="5dp"
-                android:background="@drawable/fb_round_corners_button"
-                android:layout_marginRight="5dp"
-                android:textSize="16sp"
-                android:textColor="#ffffff" />
-
-            <Button
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="TRY APP"
-                android:id="@+id/tryAppButton"
-                android:layout_weight="0.5"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/round_corners_button"
-                android:layout_marginLeft="5dp"
-                android:textSize="16sp"
-                android:textColor="@color/colorPrimaryDark" />
-        </LinearLayout>
     </RelativeLayout>
     <View
         android:id="@+id/separatorUserPass"
@@ -259,20 +242,5 @@
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New? Register here."
-        android:id="@+id/registerUserTextView"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="15sp"
-        android:clickable="true"
-        android:onClick="onClick"
-        android:layout_below="@+id/loginWindow"
-        android:layout_centerHorizontal="true"
-        android:textStyle="italic"
-        android:textIsSelectable="false" />
 
 </RelativeLayout>

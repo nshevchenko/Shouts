@@ -8,6 +8,8 @@ import android.widget.EditText;
 import com.nik.shouts.models.Shout;
 import com.nik.shouts.models.User;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -22,6 +24,7 @@ public class Configurations {
     public static final String[] TABS = {"MAP", "FEED"};
 
     public static final int REQUEST_CODE_ASK_PERMISSIONS = 123;
+    public static final int REQUEST_CODE_PLACE_PICKER = 122;
 
     // LOGIN MODES AVAILABLE IN THE APP
     public static final int APP_MODE_FACEBOOK_LOGIN = 0;
@@ -31,10 +34,19 @@ public class Configurations {
 
     // REQUEST CODES FOR OPENING PARENT ACTIVITIES
     public static final int REQUEST_CODE_PARENT_NEW_SHOUT_ACTIVITIY = 1;
-    public static final int REQUEST_CODE_PARENT_NEW_SEARCH_ACTIVITIY = 2;
+    public static final int REQUEST_CODE_PARENT_NEW_USER_ACTIVITIY = 2;
+    public static final int REQUEST_CODE_PARENT_NEW_SEARCH_ACTIVITIY = 3;
 
     public static final String REQUEST_STRING_NEW_SHOUT_ID = "new_created_shout_id";
     public static final String REQUEST_STRING_NEW_SEARCH_ID = "new_search_id";
+    public static final String REQUEST_STRING_NEW_USER_ID = "new_user_id";
+
+
+    public static final String SUCCESS_STATUS_CODE = "200";
+
+    // DATE
+    public static final DateFormat DATE_FORMAT_SHOUT_CREATION_DB = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+    public static final DateFormat DATE_FORMAT_SHOUT_CREATION_USER = new SimpleDateFormat("EEE, MMM d, ''yy");
 
 
     // INIT SOME DUMB DATA

@@ -61,21 +61,20 @@ public class ApiUtils {
     public static void parseUsers(JSONObject mainObject) throws JSONException {
         JSONArray users = mainObject.getJSONArray("users");
         for(int i = 0; i < users.length(); i++) {
-            System.out.println("1");
             JSONObject jsonObj = users.getJSONObject(i);
             // parse single values
-            System.out.println("2");
             String Id = jsonObj.getString("id");
             String password = jsonObj.getString("password");
-            String userName = jsonObj.getString("username");
+            String email = jsonObj.getString("username");
+
             String nameAndSurname = jsonObj.getString("nameAndSurname");
             String friendsStr = jsonObj.getString("friendsIDs");
             String[] friends = friendsStr.split(",");
             String interestsStr = jsonObj.getString("interests");
             String[] interests = interestsStr.split(",");
-            System.out.println("3");
+            System.out.println("email " + email);
             // create the user and add to app's data
-            User tempNewUser = new User(Id, userName, password, nameAndSurname, friends, interests);
+            User tempNewUser = new User(Id, email, password, nameAndSurname, friends, interests);
             App.usersCollections.addUser(tempNewUser);
         }
     }
@@ -104,7 +103,7 @@ public class ApiUtils {
                 participationsIDs.add(participant);
 
             String dateStr = jsonObj.getString("date");
-            Date date = Calendar.getInstance().getTime();
+            Calendar date = Calendar.getInstance();
             String participationLimitStr = jsonObj.getString("participationLimit");
             int participationLimit = Integer.parseInt(participationLimitStr);
             String locationName = jsonObj.getString("locationName");
@@ -119,8 +118,8 @@ public class ApiUtils {
 
     // UPLOAD A NEW SHOUT
 
-    public static void uploadNewShout(ApiRequestCallback uploadCallback, String jsonNewShout) {
-        HttpRequestCallback httpRequest = new HttpRequestCallback(uploadCallback, "POST", jsonNewShout);
+    public static void uploadNewJsonObject(ApiRequestCallback uploadCallback, String jsonNewObject) {
+        HttpRequestCallback httpRequest = new HttpRequestCallback(uploadCallback, "POST", jsonNewObject);
         httpRequest.execute("http://lionsrace.altervista.org/apiShouts.php");
     }
 }

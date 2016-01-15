@@ -6,10 +6,16 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.nik.shouts.R;
@@ -19,7 +25,8 @@ import com.nik.shouts.utils.Configurations;
 import com.nik.shouts.utils.Messages;
 import com.nik.shouts.utils.MapUtils;
 
-import java.util.Date;
+import java.text.ParseException;
+import java.util.Calendar;
 
 /**
  * Created by nik on 23/11/15.
@@ -47,9 +54,14 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
             R.id.inviteFriendsEditText
     };
 
+
     // map
     private MapView mapView;
     private GoogleMap googleMap;
+
+
+    //location
+    private Place shoutLocationPlace;
 
     // layout view of the fragment (accessed for validation purposes later)
 //    private View rootView;
@@ -66,12 +78,27 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
      * create Google view map
      * @param savedInstanceState
      */
-    private void setUpGoogleMap(Bundle savedInstanceState){
+    private void setUpGoogleMap(Bundle savedInstanceState) {
         mapView = (MapView) findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
         googleMap = MapUtils.initGoogleMap(mapView, this);
     }
 
+    /**
+     * On activity result of the activities for parent windows (like the location picker)
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Configurations.REQUEST_CODE_PLACE_PICKER) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(data, this);
+                String toastMsg = String.format("Place: %s", place.getName());
+                Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
     private void findActivityElements(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -99,6 +126,14 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
                 break;
 
             case R.id.search:
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                try {
+                    startActivityForResult(builder.build(this), Configurations.REQUEST_CODE_PLACE_PICKER);
+                } catch (GooglePlayServicesRepairableException e) {
+                    e.printStackTrace();
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
@@ -107,7 +142,7 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
      *
      */
     private void readAndUploadShout() {
-        Shout newShout = generateShoutFromScreen();
+        Shout newShout = generateShoutFromElements();
         Intent intent = new Intent();
         intent.putExtra(Configurations.REQUEST_STRING_NEW_SHOUT_ID, newShout.getId());
         setResult(RESULT_OK, intent);
@@ -145,7 +180,7 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
      * Create new Shout with information from edit textes
      * @return
      */
-    private Shout generateShoutFromScreen(){
+    private Shout generateShoutFromElements(){
         // read title
         EditText tempEditText = (EditText) findViewById(R.id.titleEditText);
         String title = tempEditText.getText().toString();
@@ -157,7 +192,13 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
         // get date
         tempEditText = (EditText) findViewById(R.id.dateEditText);
         String dateStr = tempEditText.getText().toString();
-        Date date = null; // get date from str
+        Calendar date = Calendar.getInstance();
+        try {
+            date.setTime(Configurations.DATE_FORMAT_SHOUT_CREATION_USER.parse(dateStr));
+        } catch(ParseException ex){
+            Log.e("CREATE NEW SHOUT ", "Date error parsing");
+        }
+        // read and save as string date in database format
 
         // get participation limit people
         tempEditText = (EditText) findViewById(R.id.limitPeopleEditText);
@@ -165,9 +206,11 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
         int participationLimit = Integer.parseInt(participationLimitStr);
 
         String creatorId = App.usersCollections.getCurrentlyLoggedInUser().getId();
-        String coordinatesStr = ""; // mapView.getCoordinates();
-        String locationName = "";
-        String locationCoordinates = "";
+
+        String locationName = shoutLocationPlace.getName().toString();
+        String locationCoordinates = shoutLocationPlace.getLatLng().toString();
+        System.out.println("Location name : " +  locationName + ", /n coordinate: " + shoutLocationPlace.getLatLng().toString());
+
 
         return App.shoutsCollections.createNewShout(
                 title, content, creatorId, date, participationLimit, locationName, locationCoordinates);

@@ -39,4 +39,17 @@ public class UsersCollections {
     public void setCurrentLoggedInUser(User user) {
         currentlyLoggedInUser = user;
     }
+
+    /**
+     * Create factory new user
+     * @param userName
+     * @param password
+     * @param nameAndSurname
+     */
+    public User createNewUser(String userName, String nameAndSurname, String password) {
+        String newUserID = users.size() + "";
+        User user = new User(newUserID, userName, nameAndSurname, password, new String[]{}, new String[]{});
+        addUser(user);
+        return user;
+    }
 }

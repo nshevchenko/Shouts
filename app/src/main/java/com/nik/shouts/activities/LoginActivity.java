@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,15 +16,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.common.api.Api;
 import com.nik.shouts.R;
 import com.nik.shouts.auth.Authorization;
 import com.nik.shouts.interfaces.ApiRequestCallback;
+import com.nik.shouts.models.User;
 import com.nik.shouts.models.collections.ShoutsCollections;
 import com.nik.shouts.models.collections.UsersCollections;
 import com.nik.shouts.utils.ApiUtils;
 import com.nik.shouts.models.App;
 import com.nik.shouts.utils.Configurations;
+import com.nik.shouts.utils.UserUtils;
 
 /**
  * Created by nik on 23/11/15.
@@ -32,7 +35,7 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
 
 
     private int[] activity_buttons = {
-            R.id.loginButton,
+            R.id.doneButton,
             R.id.tryAppButton,
             R.id.facebookLoginButton
     };
@@ -56,27 +59,71 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
         App.shoutsCollections= new ShoutsCollections();
         App.usersCollections.init();
         App.shoutsCollections.init();
+
+        // Start to download user's data from API. Once complete callback to open the main Button
+
+        ApiRequestCallback apiCallback = new ApiRequestCallback() {
+            @Override
+            public void onRequestComplete(String result) {
+                System.out.println(result);
+                ApiUtils.parseAppData(result);
+                findViewById(R.id.doneButton).setVisibility(View.VISIBLE);
+            }
+        };
+        // download app data with the related callback
+        ApiUtils.downloadInitialAppData(apiCallback);
     }
-    //
-    // Set up main elements/views inside the activity
-    //
+
+
+    /**
+     * Set up main elements/views inside the activity
+     */
     public void findActivityElements() {
         // assign listener to all buttons in the activity
         for (int i = 0; i < activity_buttons.length; i++) {
             Button activity_button = (Button) this.findViewById(activity_buttons[i]);
             activity_button.setOnClickListener(this);
         }
+
+        // disable done Button initially
+        findViewById(R.id.doneButton).setVisibility(View.GONE);
+
         ProgressBar loader = (ProgressBar) findViewById(R.id.progressBar);
         loader.setVisibility(View.GONE);
         EditText username = (EditText) findViewById(R.id.usernameEditText);
         username.setSelected(false);
         EditText password = (EditText) findViewById(R.id.passwordEditText);
         password.setSelected(false);
+        addPasswordOnTextChangerListener(password);
 
         ImageView tempImageView = (ImageView) findViewById(R.id.emailImageView);
         tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
         tempImageView = (ImageView) findViewById(R.id.passwordImageView);
         tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+    }
+
+    /**
+     * Add listener to the text changer in the password field to enable done button
+     * @param password
+     */
+    private void addPasswordOnTextChangerListener(EditText password){
+        password.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 0
+                        && !findViewById(R.id.doneButton).isEnabled()
+                        && findViewById(R.id.doneButton).getVisibility() == View.VISIBLE)
+                    findViewById(R.id.doneButton).setEnabled(true);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
     }
 
 
@@ -107,7 +154,7 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
         switch (view.getId()) {
             case R.id.create:
                 break;
-            case R.id.loginButton:     // try button clicked
+            case R.id.doneButton:     // try button clicked
                 login(Configurations.APP_MODE_USERNAME_LOGIN);
                 break;
             case R.id.facebookLoginButton:     // try button clicked
@@ -115,6 +162,9 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
                 break;
             case R.id.tryAppButton:     // try button clicked
                 login(Configurations.APP_MODE_TRY_APP_MODE);
+                break;
+            case R.id.registerUserTextView:
+                App.openActivityAsParent(this, RegisterActivity.class, Configurations.REQUEST_CODE_PARENT_NEW_USER_ACTIVITIY);
                 break;
         }
     }
@@ -136,27 +186,46 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
         }
         // LOGIN CORRECT
         // change UI
-        findViewById(R.id.usernameEditText).setVisibility(View.GONE);
+        findViewById(R.id.usernameEditText).setEnabled(false);
         findViewById(R.id.passwordEditText).setVisibility(View.GONE);
+        findViewById(R.id.doneButton).setEnabled(false);
         ProgressBar loader = (ProgressBar) findViewById(R.id.progressBar);
         loader.setVisibility(View.VISIBLE);
+
         loader.setProgress(40);
 
-        // Start to download user's data from API. Once complete callback to open the main Button
+        openMainActivity(appMode);
 
-        ApiRequestCallback apiCallback = new ApiRequestCallback() {
-            @Override
-            public void onRequestComplete(String result) {
-                System.out.println(result);
-                ApiUtils.parseAppData(result);
-                openMainActivity(appMode);
-            }
-        };
-        // download app data with the related callback
-        ApiUtils.downloadInitialAppData(apiCallback);
     }
 
+    /**
+     * On activity result returning from register user activity
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("callback from parent (y)");
+        switch (requestCode) {
+            case Configurations.REQUEST_CODE_PARENT_NEW_USER_ACTIVITIY:
+                if (resultCode == RESULT_OK) {
+                    String newUserId = data.getStringExtra(Configurations.REQUEST_STRING_NEW_USER_ID);
+                    User currentNewUser = UserUtils.getUserById(newUserId);
+                    try {
+                        ((EditText) findViewById(R.id.usernameEditText)).setText(currentNewUser.getEmail());
+                    } catch (NullPointerException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+                break;
+        }
+    }
 
+    /**
+     * Open main activityi after successful login
+     * @param appMode
+     */
     public void openMainActivity(int appMode){
         Intent intent = new Intent(this, MainActivity.class);
         String appModeStr = "" + appMode;

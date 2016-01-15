@@ -53,16 +53,16 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
         BufferedReader br = null;
         try {
             URL url = new URL(urls[0]);
-
+            String inputLine = "";
             switch (requestType) {
                 case "GET":
                     // enter your url here which to download
-                    URLConnection conn = url.openConnection();
+                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 //                    // open the stream and put it into BufferedReader
                     br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    String inputLine = "";
+                    // buffer json data here
                     while ((inputLine = br.readLine()) != null) {
-                        System.out.println(inputLine);
+                        System.out.println("line " + inputLine);
                         result += inputLine;
                     }
                     br.close();
@@ -75,7 +75,7 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
                     connection.setConnectTimeout(5000);
                     connection.setReadTimeout(5000);
                     connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-
+                    // Open an Output stream from the connection in order to buffer post payload
                     OutputStream os = connection.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(
                             new OutputStreamWriter(os, "UTF-8"));
@@ -85,10 +85,16 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
                     writer.close();
                     os.close();
                     connection.connect();
-
+                    // print response status code
                     if(connection.getResponseCode() == 200){
                         System.out.println("200");
                     }
+                    // buffer the response from server side
+                    while ((inputLine = br.readLine()) != null) {
+                        System.out.println(inputLine);
+                        result += inputLine;
+                    }
+
                     connection.disconnect();
                     break;
             }

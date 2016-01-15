@@ -2,7 +2,6 @@ package com.nik.shouts.activities;
 
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 
 import android.support.v4.view.ViewPager;
@@ -21,8 +20,6 @@ import com.nik.shouts.models.App;
 import com.nik.shouts.models.Shout;
 import com.nik.shouts.utils.ApiUtils;
 import com.nik.shouts.utils.Configurations;
-import com.nik.shouts.utils.MapUtils;
-import com.nik.shouts.utils.Messages;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -151,12 +148,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ApiRequestCallback apiCallback = new ApiRequestCallback() {
             @Override
             public void onRequestComplete(String result) {
-                System.out.println("fuck me: "+ result);
+//                if()
 //                Snackbar snackbar = Snackbar.make(findViewById(R.id.main_content_layout), Messages.DONE_UPLOAD_NEW_SHOUT, Snackbar.LENGTH_SHORT);
 //                snackbar.show();
             }
         };
         // download app data with the related callback
-        ApiUtils.uploadNewShout(apiCallback, newShout.toJSON());
+        ApiUtils.uploadNewJsonObject(apiCallback, newShout.toJSON());
     }
 }

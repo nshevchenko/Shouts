@@ -94,15 +94,23 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Loca
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause(){
+        System.out.println("paused, map off");
         mapView.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDestroy() {
+        System.out.println("destroy");
+        mapView.onDestroy();
+        super.onDestroy();
     }
 
     @Override
     public void onLowMemory() {
-        super.onLowMemory();
         mapView.onLowMemory();
+        super.onLowMemory();
     }
 
     // LISTENERS

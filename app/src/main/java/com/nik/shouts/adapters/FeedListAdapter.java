@@ -50,8 +50,7 @@ public class FeedListAdapter extends ArrayAdapter<Shout>{
         ((TextView)tempShoutViewObject).setText(shout.getContent());
 
         tempShoutViewObject  = (TextView)convertView.findViewById(R.id.date);
-        if(shout.getDate() != null)
-            ((TextView)tempShoutViewObject).setText(shout.getDate().toString());
+        ((TextView)tempShoutViewObject).setText(shout.getDateStrShout());
 
         tempShoutViewObject  = (TextView)convertView.findViewById(R.id.location);
         ((TextView)tempShoutViewObject).setText(shout.getLocationName());

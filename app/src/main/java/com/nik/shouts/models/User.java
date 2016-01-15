@@ -14,21 +14,21 @@ public class User {
     // static objects
     private String id;
     private String password;
-    private String userName;
+    private String email;
     private String nameAndSurname;
     private String[] friendsIDs;
     private String[] interests;
 
 
     public User() {
-        userName = "Guest";
+        email = "Guest";
         nameAndSurname = "Guest User";
     }
 
-    public User(String id, String userName, String password, String nameAndSurname, String[] friendsIDs, String[] interests) {
+    public User(String id, String email, String password, String nameAndSurname, String[] friendsIDs, String[] interests) {
         this.id = id;
         this.password = password;
-        this.userName = userName;
+        this.email = email;
         this.nameAndSurname = nameAndSurname;
         this.friendsIDs = friendsIDs;
         this.interests = interests;
@@ -51,7 +51,7 @@ public class User {
     public String toJSON(){
         /*
         $user = $data["user"];
-		$userName = $user["userName"];
+		$email = $user["email"];
 		$password = $user["password"];
 		$nameAndSurname = $user["nameAndSurname"];
 		$friendsIDs = $user["friendsIDs"];
@@ -59,7 +59,7 @@ public class User {
          */
         JSONObject jsonObject= new JSONObject();
         try {
-            jsonObject.put("userName", getUserName());
+            jsonObject.put("email", getEmail());
             jsonObject.put("password", getPassword());
             jsonObject.put("nameAndSurname", getNameAndSurname());
             System.out.println("friendsIDs ids " + getFriendsIDs().toString());
@@ -116,8 +116,8 @@ public class User {
         return password;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getEmail() {
+        return email;
     }
 
     public String getNameAndSurname() {

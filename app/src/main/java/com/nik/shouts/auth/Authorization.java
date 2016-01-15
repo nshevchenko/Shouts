@@ -11,9 +11,10 @@ import com.nik.shouts.utils.UserUtils;
 public class Authorization {
 
 
-    public static boolean checkCredentials(String username, String password){
-
+    public static boolean checkCredentials(String username, String password) {
         User loggedInUser = UserUtils.getUserByUserName(username);
+        if(loggedInUser == null)
+            return false;
         if(password.equals(loggedInUser.getPassword())){
             App.usersCollections.setCurrentLoggedInUser(loggedInUser);
             return true;

@@ -1,9 +1,14 @@
 package com.nik.shouts.models.collections;
 
+import android.util.Log;
+
 import com.nik.shouts.models.Shout;
+import com.nik.shouts.utils.Configurations;
 
 import java.lang.reflect.Array;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -37,7 +42,7 @@ public class ShoutsCollections {
      * @param locationCoordinates
      * @return
      */
-    public Shout createNewShout(String title, String content, String creatorId, Date date, int participationLimit, String locationName, String locationCoordinates) {
+    public Shout createNewShout(String title, String content, String creatorId, Calendar date, int participationLimit, String locationName, String locationCoordinates) {
         String newShoutID = (shouts.size() - 1) + "";
         Shout newShout = new Shout(newShoutID, title, content, creatorId, date, participationLimit, locationName, locationCoordinates);
         addShout(newShout);
@@ -56,7 +61,7 @@ public class ShoutsCollections {
      * @param locationCoordinates
      * @return
      */
-    public Shout createNewShout(String title, String content, String creatorId, ArrayList<String> participationsIDs, Date date, int participationLimit, String locationName, String locationCoordinates) {
+    public Shout createNewShout(String title, String content, String creatorId, ArrayList<String> participationsIDs, Calendar date, int participationLimit, String locationName, String locationCoordinates) {
         String newShoutID = (shouts.size() - 1) + "";
         Shout newShout = new Shout(newShoutID, title, content, creatorId, date, participationLimit, participationsIDs, locationName, locationCoordinates);
         addShout(newShout);

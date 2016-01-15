@@ -1,5 +1,6 @@
 package com.nik.shouts.models;
 
+import com.nik.shouts.utils.Configurations;
 import com.nik.shouts.utils.UserUtils;
 
 import org.json.JSONArray;
@@ -8,6 +9,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -21,7 +23,7 @@ public class Shout {
     private String title;
     private String creatorId;
     private ArrayList<String> participationsIDs;
-    private Date date;
+    private Calendar date;
     private String locationName;
     private int participationLimit;
     private String locationCoordinates;
@@ -37,7 +39,7 @@ public class Shout {
      * @param locationName
      * @param locationCoordinates
      */
-    public Shout(String id, String title, String content, String creatorId, Date date, int participationLimit, String locationName, String locationCoordinates) {
+    public Shout(String id, String title, String content, String creatorId, Calendar date, int participationLimit, String locationName, String locationCoordinates) {
         this.id = id;
         this.content = content;
         this.title = title;
@@ -59,7 +61,7 @@ public class Shout {
      * @param locationName
      * @param locationCoordinates
      */
-    public Shout(String title, String content, String creatorId, Date date, int participationLimit, String locationName, String locationCoordinates) {
+    public Shout(String title, String content, String creatorId, Calendar date, int participationLimit, String locationName, String locationCoordinates) {
         this.title = title;
         this.content = content;
         this.creatorId = creatorId;
@@ -71,7 +73,7 @@ public class Shout {
     }
 
 
-    public Shout(String id, String title, String content, String creatorId, Date date, int participationLimit, ArrayList<String> participationsIDs, String locationName, String locationCoordinates) {
+    public Shout(String id, String title, String content, String creatorId, Calendar date, int participationLimit, ArrayList<String> participationsIDs, String locationName, String locationCoordinates) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -150,9 +152,25 @@ public class Shout {
         return participationsIDs;
     }
 
-    public Date getDate() {
+    public Calendar getDate() {
         return date;
     }
+
+    public String getDateStrShout() {
+        if(date == null)
+            return "...";
+        return Configurations.DATE_FORMAT_SHOUT_CREATION_USER.format(date.getTime());
+    }
+
+//    public String getDateStrDbFormat() {
+//        if(date == null)
+//            return "";
+//        return Configurations.DATE_FORMAT_SHOUT_CREATION_DB.format(date.getTime());
+//    }
+//
+//    public void setDateUserFormat(String dateStrUserFormat){
+//        date.setTime(Configurations.DATE_FORMAT_SHOUT_CREATION_USER);
+//    }
 
     public String getCreatorId() {
         return creatorId;
