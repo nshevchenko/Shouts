@@ -71,7 +71,7 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
             }
         };
         // download app data with the related callback
-        ApiUtils.downloadInitialAppData(apiCallback);
+        ApiUtils.getRequestWithCallBack(Configurations.REMOTE_SERVER_URL, apiCallback);
     }
 
 
@@ -96,7 +96,7 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
         password.setSelected(false);
         addPasswordOnTextChangerListener(password);
 
-        ImageView tempImageView = (ImageView) findViewById(R.id.emailImageView);
+        ImageView tempImageView = (ImageView) findViewById(R.id.nameImageView);
         tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
         tempImageView = (ImageView) findViewById(R.id.passwordImageView);
         tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
@@ -172,17 +172,32 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
     public void login(final int appMode){
 //        System.out.println(appMode + " " + Configurations.APP_MODE_USERNAME_LOGIN);
 
-        if(appMode == Configurations.APP_MODE_USERNAME_LOGIN) {
-            // read login credentials
-            String usernameEditText = ((EditText) findViewById(R.id.usernameEditText)).getText().toString();
-            String passwordEditText = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
-            // check user credentials here
-            boolean resultLogin = Authorization.checkCredentials(usernameEditText, passwordEditText);
-            if (! resultLogin ) {
-                Snackbar snackbar = Snackbar.make(findViewById(R.id.main_content), "Username or Password incorrect :(", Snackbar.LENGTH_SHORT);
-                snackbar.show();
-                return; // don't login if credentials are wrong
-            }
+        switch(appMode) {
+            case Configurations.APP_MODE_USERNAME_LOGIN:
+                // read login credentials
+                String usernameEditText = ((EditText) findViewById(R.id.usernameEditText)).getText().toString();
+                String passwordEditText = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
+                // check user credentials here
+                boolean resultLogin = Authorization.checkCredentials(usernameEditText, passwordEditText);
+                if (! resultLogin ) {
+                    Snackbar snackbar = Snackbar.make(findViewById(R.id.main_content), "Username or Password incorrect :(", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                    return; // don't login if credentials are wrong
+                }
+                break;
+
+            case Configurations.APP_MODE_TRY_APP_MODE :
+                User newGuest = App.usersCollections.createNewGuest();
+                App.usersCollections.setCurrentLoggedInUser(newGuest);
+                ApiRequestCallback apiCallback = new ApiRequestCallback() {
+                    @Override
+                    public void onRequestComplete(String result) {
+                        openMainActivity(appMode);
+                    }
+                };
+                // download app data with the related callback
+                ApiUtils.uploadNewJsonObject(apiCallback, newGuest.toJSON());
+                break;
         }
         // LOGIN CORRECT
         // change UI
@@ -190,8 +205,8 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
         findViewById(R.id.passwordEditText).setVisibility(View.GONE);
         findViewById(R.id.doneButton).setEnabled(false);
         ProgressBar loader = (ProgressBar) findViewById(R.id.progressBar);
-        loader.setVisibility(View.VISIBLE);
 
+        loader.setVisibility(View.VISIBLE);
         loader.setProgress(40);
 
         openMainActivity(appMode);
@@ -211,8 +226,10 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
             case Configurations.REQUEST_CODE_PARENT_NEW_USER_ACTIVITIY:
                 if (resultCode == RESULT_OK) {
                     String newUserId = data.getStringExtra(Configurations.REQUEST_STRING_NEW_USER_ID);
+                    System.out.println("newUserId " + newUserId );
                     User currentNewUser = UserUtils.getUserById(newUserId);
                     try {
+                        System.out.println("currentNewUser" + currentNewUser.getNameAndSurname());
                         ((EditText) findViewById(R.id.usernameEditText)).setText(currentNewUser.getEmail());
                     } catch (NullPointerException ex) {
                         ex.printStackTrace();

@@ -60,6 +60,7 @@
                 android:value="com.nik.shouts.activities.MainActivity" />
         </activity>
 
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAHopvQWnmjuqlP3nNjOpm-XG28WETV6Lg"/>

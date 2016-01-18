@@ -6,6 +6,7 @@ import com.nik.shouts.interfaces.*;
 import com.nik.shouts.models.App;
 import com.nik.shouts.models.Shout;
 import com.nik.shouts.models.User;
+import com.nik.shouts.models.collections.UsersCollections;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,20 +23,6 @@ import java.util.Date;
 
 public class ApiUtils {
 
-
-    // PARSE INITIAL APPLICATION DATA
-
-
-
-    /**
-     * Download main data for the user's login = shouts to show and users(friends)
-     * @param apiFinalCallback
-     */
-    public static void downloadInitialAppData(final ApiRequestCallback apiFinalCallback) {
-        // download users
-        HttpRequestCallback httpRequest = new HttpRequestCallback(apiFinalCallback, "GET");
-        httpRequest.execute("http://lionsrace.altervista.org/apiShouts.php");
-    }
 
     /**
      * Parse the initial downloaded application data from server
@@ -65,8 +52,8 @@ public class ApiUtils {
             // parse single values
             String Id = jsonObj.getString("id");
             String password = jsonObj.getString("password");
-            String email = jsonObj.getString("username");
-
+            String username = jsonObj.getString("username");
+            String email = jsonObj.getString("email");
             String nameAndSurname = jsonObj.getString("nameAndSurname");
             String friendsStr = jsonObj.getString("friendsIDs");
             String[] friends = friendsStr.split(",");
@@ -74,8 +61,7 @@ public class ApiUtils {
             String[] interests = interestsStr.split(",");
             System.out.println("email " + email);
             // create the user and add to app's data
-            User tempNewUser = new User(Id, email, password, nameAndSurname, friends, interests);
-            App.usersCollections.addUser(tempNewUser);
+            App.usersCollections.createNewUser(username, email, nameAndSurname, password, friends, interests);
         }
     }
 
@@ -110,14 +96,40 @@ public class ApiUtils {
             String locationCoordinates = jsonObj.getString("locationCoordinates");
             // create the user and add to app's data
             App.shoutsCollections.createNewShout(title, content, creatorId, participationsIDs, date, participationLimit, locationName, locationCoordinates);
-
         }
     }
 
 
 
-    // UPLOAD A NEW SHOUT
 
+    // HTTP REQUESTS
+
+
+    /**
+     * GET REQUEST
+     * @param apiFinalCallback
+     */
+    public static void getRequestWithCallBack(String url, final ApiRequestCallback apiFinalCallback) {
+        // download users
+        HttpRequestCallback httpRequest = new HttpRequestCallback(apiFinalCallback, "GET");
+        httpRequest.execute(url);
+    }
+
+    /**
+     * GET REQUEST AND DOWNLOAD PNG
+     * @param apiFinalCallback
+     */
+    public static void getPNGBitmap(String url, final ApiRequestCallback apiFinalCallback) {
+        // download users
+        HttpRequestCallback httpRequest = new HttpRequestCallback(apiFinalCallback, "GET RAW");
+        httpRequest.execute(url);
+    }
+
+    /**
+     * POST REQUEST
+     * @param uploadCallback
+     * @param jsonNewObject
+     */
     public static void uploadNewJsonObject(ApiRequestCallback uploadCallback, String jsonNewObject) {
         HttpRequestCallback httpRequest = new HttpRequestCallback(uploadCallback, "POST", jsonNewObject);
         httpRequest.execute("http://lionsrace.altervista.org/apiShouts.php");

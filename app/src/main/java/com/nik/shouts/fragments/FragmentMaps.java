@@ -1,10 +1,11 @@
 package com.nik.shouts.fragments;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationListener;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,14 +15,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 import com.nik.shouts.R;
+import com.nik.shouts.activities.MainActivity;
+import com.nik.shouts.models.App;
 import com.nik.shouts.utils.Configurations;
 import com.nik.shouts.utils.MapUtils;
+
+import java.util.Map;
 
 /**
  * Created by nik on 26/10/15.
@@ -49,6 +55,7 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Loca
         View rootView = inflater.inflate(R.layout.fragment_maps, container, false);
         setUpGoogleMap(rootView, savedInstanceState);
         findElements(rootView);
+        updateMyLocation();
         return rootView;
     }
 
@@ -69,41 +76,34 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Loca
         myLocationButton.setOnClickListener(this);
     }
 
-    //
-    // Update map view on my location coordinates. Set call back to this fragment
-    //
-    private void updateMapOnMyLocation() {
-        locationManager = (LocationManager) this.getContext().getSystemService(Context.LOCATION_SERVICE);
-        try{
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-        }catch (SecurityException se) {
-            Log.d("TAG", "SE CAUGHT");
-            se.printStackTrace();
-        }
-    }
-
-    //
-    // Animate camera towards coordinates
-    //
-
 
     @Override
     public void onResume() {
-        mapView.onResume();
+
+//        mapView.getLayoutParams().height = ActionBar.LayoutParams.FILL_PARENT;
+//        mapView.getLayoutParams().width = ActionBar.LayoutParams.FILL_PARENT;
+//        mapView.invalidate();
+//        mapView.requestLayout();
         super.onResume();
+    }
+
+    public void hideStupidMaps() {
+
     }
 
     @Override
     public void onPause(){
+
         System.out.println("paused, map off");
-        mapView.onDestroy();
-        super.onDestroy();
+//        hideStupidMaps();
+        super.onPause();
     }
 
     @Override
     public void onDestroy() {
+//        hideStupidMaps();
         System.out.println("destroy");
-        mapView.onDestroy();
+//        mapView.onDestroy();
         super.onDestroy();
     }
 
@@ -121,36 +121,31 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Loca
         System.out.println(id);
         switch (id){
             case R.id.mylocation:
-                if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // call request permission popup in order to access the location
-                    requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
-                            Configurations.REQUEST_CODE_ASK_PERMISSIONS);
-                } else {
-                    //permission granted bro, get dat location!!
-                    updateMapOnMyLocation();
-                }
+                updateMyLocation();
                 break;
         }
     }
 
-    //
-    // Listener for requesting permissions
-    //
+    /**
+     * Listener for requesting permissions
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case Configurations.REQUEST_CODE_ASK_PERMISSIONS:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission Granted
-                    updateMapOnMyLocation();
+                    updateMyLocation();
                 } else {
                     System.out.println("permission denined, do nothing yet.. :(");
                     // Permission Denied
-//                    Toast.makeText(MainActivity.this, "WRITE_CONTACTS Denied", Toast.LENGTH_SHORT)
+//                    Toast.makeText(this, "WRITE_CONTACTS Denied", Toast.LENGTH_SHORT)
 //                            .show();
-                }
 
+                }
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -163,10 +158,14 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Loca
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d("CHANGED", "LOCATION UPDATED");
+        System.out.println("CHANGED LOCATION UPDATED");
         System.out.println(location.getLatitude());
         LatLng coordinates = MapUtils.getLatLngFromLocation(location);
         MapUtils.animateMapViewToCoordinates(googleMap, coordinates);
+
+        // set the new received location to the current user's last known position
+
+        App.usersCollections.getCurrentlyLoggedInUser().setLastKnownCoordinates(coordinates);
         try {
             locationManager.removeUpdates(this);
         } catch(SecurityException ex){
@@ -188,5 +187,25 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Loca
     @Override
     public void onProviderDisabled(String s) {
 
+    }
+
+    /**
+     *  Update map view on my location coordinates. Set call back to this fragment
+     */
+    private void updateMyLocation() {
+        // check if permission given in the required APIs
+        if( ! MapUtils.checkLocationPermissionActive(this.getActivity())) {
+            // call request permission popup in order to access the location
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    Configurations.REQUEST_CODE_ASK_PERMISSIONS);
+            return;
+        }
+        locationManager = (LocationManager) this.getContext().getSystemService(Context.LOCATION_SERVICE);
+        try {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+        } catch (SecurityException se) {
+            Log.d("TAG", "SE CAUGHT");
+            se.printStackTrace();
+        }
     }
 }

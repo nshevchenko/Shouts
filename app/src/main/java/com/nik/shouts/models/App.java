@@ -66,4 +66,6 @@ public class App {
         Intent newIntent = new Intent(act, newIntentClass);
         act.startActivity(newIntent);
     }
+
+    
 }

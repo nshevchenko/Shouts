@@ -1,15 +1,25 @@
 package com.nik.shouts.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -18,15 +28,20 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.model.LatLng;
 import com.nik.shouts.R;
+import com.nik.shouts.interfaces.ApiRequestCallback;
 import com.nik.shouts.models.Shout;
 import com.nik.shouts.models.App;
+import com.nik.shouts.utils.ApiUtils;
 import com.nik.shouts.utils.Configurations;
-import com.nik.shouts.utils.Messages;
 import com.nik.shouts.utils.MapUtils;
+import com.nik.shouts.utils.Messages;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Map;
 
 /**
  * Created by nik on 23/11/15.
@@ -36,11 +51,7 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
 
     // Activity buttons to received the callback for
     private int[] activity_buttons = {
-            R.id.doneButton,
-            R.id.dateButton,
-            R.id.timeButton,
-            R.id.limitPeopleButton,
-            R.id.inviteFriendsButton
+            R.id.doneButton
     };
 
     // Activities edit textes to be read and validated
@@ -53,7 +64,6 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
             R.id.invitePeopleTextView,
             R.id.inviteFriendsEditText
     };
-
 
     // map
     private MapView mapView;
@@ -70,7 +80,6 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_shout);
-        setUpGoogleMap(savedInstanceState);
         findActivityElements();
     }
 
@@ -78,11 +87,6 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
      * create Google view map
      * @param savedInstanceState
      */
-    private void setUpGoogleMap(Bundle savedInstanceState) {
-        mapView = (MapView) findViewById(R.id.map);
-        mapView.onCreate(savedInstanceState);
-        googleMap = MapUtils.initGoogleMap(mapView, this);
-    }
 
     /**
      * On activity result of the activities for parent windows (like the location picker)
@@ -93,13 +97,17 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Configurations.REQUEST_CODE_PLACE_PICKER) {
             if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(data, this);
-                String toastMsg = String.format("Place: %s", place.getName());
+                shoutLocationPlace = PlacePicker.getPlace(data, this);
+                String toastMsg = String.format("Place: %s", shoutLocationPlace.getName());
                 Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
+                updateStaticMap(shoutLocationPlace.getLatLng());
             }
         }
     }
 
+    /**
+     * Find elements from this activity for initial settings
+     */
     private void findActivityElements(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -110,6 +118,12 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
         }
         FloatingActionButton button = (FloatingActionButton) findViewById(R.id.search);
         button.setOnClickListener(this);
+        findViewById(R.id.dateEditText).setOnClickListener(this);
+        findViewById(R.id.timeEditText).setOnClickListener(this);
+        findViewById(R.id.inviteFriendsEditText).setOnClickListener(this);
+        findViewById(R.id.limitPeopleEditText).setOnClickListener(this);
+        findViewById(R.id.hashtagsEditText).setOnClickListener(this);
+
     }
 
 
@@ -117,6 +131,9 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         System.out.println("button clicked " + view.getId());
         switch (view.getId()) {
+            case R.id.backButton:
+                finish();
+                break;
             case R.id.doneButton:
                 //validate shout
                 if( ! validateNewShout())
@@ -124,7 +141,6 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
                 // read and upload shout
                 readAndUploadShout();
                 break;
-
             case R.id.search:
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 try {
@@ -135,11 +151,43 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
                     e.printStackTrace();
                 }
                 break;
+            case R.id.dateEditText:
+
+                break;
+            case R.id.emailEditText:
+
+                break;
+            case R.id.inviteFriendsEditText:
+                break;
+            case R.id.limitPeopleEditText:
+                System.out.println("infiltrare");
+
+                break;
+            case R.id.hashtagsEditText:
+                break;
         }
     }
 
     /**
-     *
+     * Update static map imageview
+     * @param latLng
+     */
+    private void updateStaticMap(LatLng latLng){
+        String parameters = MapUtils.getStaticMapFromLatLng(latLng);
+
+        ApiUtils.getPNGBitmap(Configurations.STATIC_MAP_URL + parameters, new ApiRequestCallback() {
+            @Override
+            public void onRequestComplete(String result) {
+                Bitmap staticMap = MapUtils.stringToBitMap(result);
+                ImageView staticMapImageView = ((ImageView) findViewById(R.id.mapImageView));
+                staticMapImageView.setImageBitmap(staticMap);
+                findViewById(R.id.searchForAddressTextView).setVisibility(View.GONE);
+            }
+        });
+    }
+
+    /**
+     *   Return to main activity with shout object (precisely the shout id)
      */
     private void readAndUploadShout() {
         Shout newShout = generateShoutFromElements();
@@ -150,6 +198,7 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
 //        ((MainActivity)getActivity()).updateMapAndListFeed(newShout);
 //        getActivity().getSupportFragmentManager().beginTransaction().remove(this).commit();
     }
+
 
     /**
      * Validate the current Edit Textes present on the screen in order to generate a successful new object shout
@@ -207,10 +256,13 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
 
         String creatorId = App.usersCollections.getCurrentlyLoggedInUser().getId();
 
-        String locationName = shoutLocationPlace.getName().toString();
-        String locationCoordinates = shoutLocationPlace.getLatLng().toString();
-        System.out.println("Location name : " +  locationName + ", /n coordinate: " + shoutLocationPlace.getLatLng().toString());
-
+        String locationName = "";
+        String locationCoordinates = "";
+        if(shoutLocationPlace != null) {
+            locationName = shoutLocationPlace.getName().toString();
+            locationCoordinates = shoutLocationPlace.getLatLng().toString();
+            System.out.println("Location name : " + locationName + ", /n coordinate: " + shoutLocationPlace.getLatLng().toString());
+        }
 
         return App.shoutsCollections.createNewShout(
                 title, content, creatorId, date, participationLimit, locationName, locationCoordinates);

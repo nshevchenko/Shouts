@@ -33,23 +33,52 @@ public class UsersCollections {
      * @return
      */
     public User getCurrentlyLoggedInUser(){
-        return currentlyLoggedInUser == null ? new User() : currentlyLoggedInUser;
+        return currentlyLoggedInUser;
     }
 
     public void setCurrentLoggedInUser(User user) {
         currentlyLoggedInUser = user;
     }
 
+
     /**
      * Create factory new user
-     * @param userName
+     * @param username
+     * @param email
      * @param password
      * @param nameAndSurname
+     * @param friendsIDs
+     * @param interests
      */
-    public User createNewUser(String userName, String nameAndSurname, String password) {
+    public User createNewUser(String username, String email, String nameAndSurname, String password, String[] friendsIDs, String[] interests) {
         String newUserID = users.size() + "";
-        User user = new User(newUserID, userName, nameAndSurname, password, new String[]{}, new String[]{});
+        User user = new User(newUserID, username, email, nameAndSurname, password, friendsIDs, interests);
         addUser(user);
         return user;
+    }
+
+
+    /**
+     * Create factory new user
+     * @param username
+     * @param email
+     * @param nameAndSurname
+     * @param password
+     */
+    public User createNewUser(String username, String email, String nameAndSurname, String password) {
+        String newUserID = users.size() + "";
+        User user = new User(newUserID, username, email, nameAndSurname, password, new String[]{}, new String[]{});
+        addUser(user);
+        return user;
+    }
+
+    /**
+     * create new guest as a user
+     * @return
+     */
+    public User createNewGuest(){
+        String newUserID = users.size() + "";
+        User newGuest = new User(newUserID);
+        return newGuest;
     }
 }

@@ -58,7 +58,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:id="@+id/emailImageView"
+                    android:id="@+id/nameImageView"
                     android:src="@android:drawable/ic_dialog_email"
                     android:scaleType="centerCrop"
                     android:layout_marginTop="15dp"
@@ -80,7 +80,7 @@
                     android:visibility="visible"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:layout_toRightOf="@+id/emailImageView"
+                    android:layout_toRightOf="@+id/nameImageView"
                     android:layout_centerVertical="true" />
 
             </RelativeLayout>

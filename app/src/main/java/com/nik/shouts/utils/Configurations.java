@@ -43,6 +43,9 @@ public class Configurations {
 
 
     public static final String SUCCESS_STATUS_CODE = "200";
+    public static final String REMOTE_SERVER_URL = "http://lionsrace.altervista.org/apiShouts.php";
+    public static final String STATIC_MAP_URL = "http://maps.google.com/maps/api/staticmap";
+
 
     // DATE
     public static final DateFormat DATE_FORMAT_SHOUT_CREATION_DB = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");

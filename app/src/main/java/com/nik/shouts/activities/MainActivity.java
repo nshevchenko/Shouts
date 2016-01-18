@@ -1,5 +1,6 @@
 package com.nik.shouts.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -10,7 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.nik.shouts.R;
 import com.nik.shouts.adapters.SectionsPagerAdapter;
@@ -43,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setUpTabsLayout();
         findActivityElements();
+
+        // hide keyboard
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     private void setUpTabsLayout(){
@@ -69,6 +76,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         EditText searchEditText = (EditText) findViewById(R.id.searchEditText);
         searchEditText.setSelected(false);
         searchEditText.setOnClickListener(this);
+
+        // check if currently logged in user is not null
+        if (App.usersCollections.getCurrentlyLoggedInUser() != null) {
+            TextView nameTextView = (TextView) findViewById(R.id.nameTextView);
+            nameTextView.setText(App.usersCollections.getCurrentlyLoggedInUser().getName());
+        }
 
     }
 

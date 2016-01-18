@@ -1,7 +1,16 @@
 package com.nik.shouts.utils;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.util.Base64;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -12,13 +21,15 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.nik.shouts.models.Place;
 
+import java.io.ByteArrayOutputStream;
+
 /**
  * Created by nik on 12/12/15.
  */
 
 public class MapUtils {
 
-    private static Place lastKnownPlace;
+    private static Place lastUserKnownPlace;
 
 //    public static
 
@@ -44,7 +55,6 @@ public class MapUtils {
         GoogleMap googleMap = mapView.getMap();
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         googleMap.setMyLocationEnabled(true);
-
         MapsInitializer.initialize(activity);
         // Updates the location and zoom of the MapView
 //        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(new LatLng(43.1, -87.9), 10);
@@ -71,4 +81,47 @@ public class MapUtils {
                 .build();                   // Creates a CameraPosition from the builder
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
+
+
+    public static String getStaticMapFromLatLng(LatLng latLng) {
+        String marker = "&markers=color:red%7C" + latLng.latitude + "," + latLng.longitude;
+        return "?center=" + latLng.latitude + "," + latLng.longitude + "&zoom=16&size=800x800&sensor=false";
+
+    }
+    /**
+     * Request permission location for the new Marshamallow version
+     * @param fromActivity
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    public static boolean checkLocationPermissionActive(Activity fromActivity) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            if (ActivityCompat.checkSelfPermission(fromActivity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(fromActivity.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                return false;
+        return true;
+    }
+
+    /**
+     * Get static map bitmap from encoded string
+     * @param encodedString
+     * @return
+     */
+    public static Bitmap stringToBitMap(String encodedString){
+        try {
+            byte [] encodeByte= Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap= BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch(Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
+    public static String bitmapToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        return Base64.encodeToString(b, Base64.DEFAULT);
+    }
+
 }

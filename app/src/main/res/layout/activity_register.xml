@@ -2,17 +2,52 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_content"
+    android:id="@+id/main_content_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.LoginActivity"
     android:background="#fff6f6">
 
-    
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="400dp"
-        android:id="@+id/topLayout">
+        android:layout_height="50dp"
+        android:id="@+id/actionBarActivityRegister"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentTop="true">
+
+        <Button
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/backButton"
+            android:layout_centerVertical="true"
+            android:background="@android:drawable/ic_menu_revert"
+            android:layout_alignParentTop="false"
+            android:layout_alignParentLeft="false"
+            android:layout_marginLeft="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login"
+            android:id="@+id/actionBarLogin"
+            android:layout_gravity="left"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentEnd="false"
+            android:layout_alignParentRight="false"
+            android:textColor="#FFFFFF"
+            android:textIsSelectable="false"
+            android:textSize="18sp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="60dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="300dp"
+        android:id="@+id/topLayout"
+        android:layout_below="@+id/actionBarActivityRegister">
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -21,24 +56,13 @@
             android:scaleType="centerCrop" />
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:id="@+id/logoPicture"
             android:src="@mipmap/logo"
             android:scaleType="centerCrop"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="20dp"
             android:layout_gravity="center_horizontal"
-            android:layout_centerHorizontal="true" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SHOUTS"
-            android:id="@+id/shoutsLabel"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="20sp"
-            android:layout_below="@+id/logoPicture"
             android:layout_centerHorizontal="true" />
 
         <RelativeLayout
@@ -58,7 +82,7 @@
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:id="@+id/emailImageView"
+                    android:id="@+id/usernameImageView"
                     android:src="@android:drawable/ic_dialog_email"
                     android:scaleType="centerCrop"
                     android:layout_marginTop="15dp"
@@ -70,8 +94,8 @@
                     android:id="@+id/usernameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text|textEmailAddress"
-                    android:hint="Email"
+                    android:inputType="text"
+                    android:hint="User name"
                     android:textAlignment="textStart"
                     android:layout_marginTop="10dp"
                     android:theme="@style/WhiteEditTextTheme"
@@ -80,7 +104,7 @@
                     android:visibility="visible"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:layout_toRightOf="@+id/emailImageView"
+                    android:layout_toRightOf="@+id/usernameImageView"
                     android:layout_centerVertical="true" />
 
             </RelativeLayout>
@@ -107,7 +131,7 @@
                     android:id="@+id/nameAndSurnameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text|textEmailAddress"
+                    android:inputType="text"
                     android:hint="Name"
                     android:textAlignment="textStart"
                     android:layout_marginTop="10dp"
@@ -122,10 +146,46 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/emailLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_below="@+id/nameAndSurnameLayout">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/emailImageView"
+                    android:src="@android:drawable/ic_dialog_email"
+                    android:scaleType="centerCrop"
+                    android:layout_marginTop="15dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="5dp"
+                    android:layout_centerVertical="true" />
+
+                <EditText
+                    android:id="@+id/emailEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:hint="Email"
+                    android:textAlignment="textStart"
+                    android:layout_marginTop="10dp"
+                    android:theme="@style/WhiteEditTextTheme"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textColorHint="@color/colorPrimaryDark"
+                    android:visibility="visible"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_toRightOf="@+id/emailImageView"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/passwordLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/nameAndSurnameLayout"
+                android:layout_below="@+id/emailLayout"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp">
 
@@ -172,7 +232,7 @@
         android:id="@+id/loginWindow"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="400dp">
+        android:layout_marginTop="350dp">
 
         <Button
             android:layout_width="match_parent"

@@ -1,5 +1,7 @@
 package com.nik.shouts.models;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,34 +15,44 @@ public class User {
 
     // static objects
     private String id;
+    private String username;
     private String password;
     private String email;
     private String nameAndSurname;
     private String[] friendsIDs;
     private String[] interests;
 
+    // extra
+    private LatLng lastKnownCoordinates;
 
-    public User() {
-        email = "Guest";
-        nameAndSurname = "Guest User";
+    public User(String id) {
+        this.id = id;
+        this.username = "Guest";
+        this.email = "Guest";
+        this.nameAndSurname = "Guest User";
+        this.friendsIDs = new String[]{};
+        this.interests = new String[]{};
     }
 
-    public User(String id, String email, String password, String nameAndSurname, String[] friendsIDs, String[] interests) {
+    public User(String id, String username, String email, String nameAndSurname, String password, String[] friendsIDs, String[] interests) {
         this.id = id;
-        this.password = password;
+        this.username = username;
         this.email = email;
         this.nameAndSurname = nameAndSurname;
+        this.password = password;
         this.friendsIDs = friendsIDs;
         this.interests = interests;
     }
 
     public String getInterestsAsString() {
         String interestsStr = "";
-        int interestsListSize = interests.length;
-        for(int i = 0; i < interestsListSize - 1; i++){
+
+        if(interests.length == 0)
+            return "";
+
+        for(int i = 0; i < interests.length; i++){
             interestsStr += interests[i] + ", ";
         }
-        interestsStr += interests[interestsListSize - 1];
         return interestsStr;
     }
 
@@ -57,16 +69,19 @@ public class User {
 		$friendsIDs = $user["friendsIDs"];
 		$interests = $user["interests"];
          */
-        JSONObject jsonObject= new JSONObject();
+        JSONObject resultJson = new JSONObject();
         try {
+            JSONObject jsonObject = new JSONObject();
             jsonObject.put("email", getEmail());
+            jsonObject.put("username", getUsername());
             jsonObject.put("password", getPassword());
             jsonObject.put("nameAndSurname", getNameAndSurname());
             System.out.println("friendsIDs ids " + getFriendsIDs().toString());
             jsonObject.put("friendsIDs", getFriendsIDs().toString());
             System.out.println("interests " + getInterestsAsString());
             jsonObject.put("interests", getInterestsAsString());
-            return jsonObject.toString();
+            resultJson.put("user", jsonObject);
+            return resultJson.toString();
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -108,6 +123,22 @@ public class User {
         return usersLastAcceptedShouts;
     }
 
+    /**
+     * Set user's current last location
+     * @param lastKnownCoordinates
+     */
+    public void setLastKnownCoordinates(LatLng lastKnownCoordinates) {
+        this.lastKnownCoordinates = lastKnownCoordinates;
+    }
+
+    /**
+     * Return last known location
+     * @return lastKnownCoordinates
+     */
+    public LatLng getLastKnownCoordinates() {
+        return lastKnownCoordinates;
+    }
+
     public String getId() {
         return id;
     }
@@ -129,6 +160,10 @@ public class User {
         return splitName[0];
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     public String getSurname() {
         String[] splitName = nameAndSurname.split(" ");
         return splitName[splitName.length - 1];
@@ -137,6 +172,7 @@ public class User {
     public String[] getInterests() {
         return interests;
     }
+
     public String[] getFriendsIDs() {
         return friendsIDs;
     }

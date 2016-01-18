@@ -1,18 +1,28 @@
 package com.nik.shouts.interfaces;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Base64;
+
+import com.nik.shouts.utils.Configurations;
+import com.nik.shouts.utils.MapUtils;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -50,27 +60,38 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
     protected String doInBackground(String... urls)
     {
         String result = "";
-        BufferedReader br = null;
+
         try {
             URL url = new URL(urls[0]);
             String inputLine = "";
+            // connection for http request
+            HttpURLConnection connection = null;
+            // buffer reader to read output from server
+            BufferedReader br = null;
+
             switch (requestType) {
+                case "GET RAW" :
+                    connection =  (HttpURLConnection)url.openConnection();
+                    InputStream inputStream = connection.getInputStream();
+                    BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+                    Bitmap bitmap = BitmapFactory.decodeStream(bufferedInputStream);
+                    result = MapUtils.bitmapToString(bitmap);
+                    break;
                 case "GET":
-                    // enter your url here which to download
-                    HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-//                    // open the stream and put it into BufferedReader
-                    br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    // buffer json data here
+                    connection =  (HttpURLConnection)url.openConnection();
+                    br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+//                  buffer json data here
                     while ((inputLine = br.readLine()) != null) {
                         System.out.println("line " + inputLine);
                         result += inputLine;
                     }
                     br.close();
+                    connection.disconnect();
                     break;
                 case "POST":
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection =  (HttpURLConnection)url.openConnection();
                     connection.setRequestMethod("POST");
-                    connection.setDoInput(true);
                     connection.setDoOutput(true);
                     connection.setConnectTimeout(5000);
                     connection.setReadTimeout(5000);
@@ -84,17 +105,19 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
                     writer.flush();
                     writer.close();
                     os.close();
-                    connection.connect();
                     // print response status code
-                    if(connection.getResponseCode() == 200){
-                        System.out.println("200");
-                    }
+//                    if(connection.getResponseCode() == 200)
+//                        return Configurations.SUCCESS_STATUS_CODE;
+
+                    // debugging output
+                     br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     // buffer the response from server side
-                    while ((inputLine = br.readLine()) != null) {
+                     while ((inputLine = br.readLine()) != null) {
                         System.out.println(inputLine);
                         result += inputLine;
                     }
 
+                    br.close();
                     connection.disconnect();
                     break;
             }
@@ -103,6 +126,8 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
                 e.printStackTrace();
         }catch (IOException e){
             e.printStackTrace();
+        } finally {
+
         }
         return result;
     }

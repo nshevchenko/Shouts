@@ -12,21 +12,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.nik.shouts.R;
-import com.nik.shouts.auth.Authorization;
 import com.nik.shouts.interfaces.ApiRequestCallback;
 import com.nik.shouts.models.App;
-import com.nik.shouts.models.Shout;
 import com.nik.shouts.models.User;
-import com.nik.shouts.models.collections.ShoutsCollections;
-import com.nik.shouts.models.collections.UsersCollections;
 import com.nik.shouts.utils.ApiUtils;
 import com.nik.shouts.utils.Configurations;
 import com.nik.shouts.utils.Messages;
-
-import java.util.Date;
 
 /**
  * Created by nik on 23/11/15.
@@ -57,18 +50,18 @@ public class RegisterActivity extends Activity implements View.OnClickListener  
             Button activity_button = (Button) this.findViewById(activity_buttons[i]);
             activity_button.setOnClickListener(this);
         }
-        EditText username = (EditText) findViewById(R.id.usernameEditText);
-        username.setSelected(false);
-        EditText name = (EditText) findViewById(R.id.nameAndSurnameEditText);
-        name.setSelected(false);
-        EditText password = (EditText) findViewById(R.id.passwordEditText);
-        password.setSelected(false);
+        findViewById(R.id.usernameEditText).setSelected(false);
+        findViewById(R.id.nameAndSurnameEditText).setSelected(false);;
+        findViewById(R.id.passwordEditText).setSelected(false);
+        findViewById(R.id.emailEditText).setSelected(false);
 
-        ImageView tempImageView = (ImageView) findViewById(R.id.emailImageView);
+        ImageView tempImageView = (ImageView) findViewById(R.id.usernameImageView);
         tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
         tempImageView = (ImageView) findViewById(R.id.nameAndSurnameImageView);
         tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
         tempImageView = (ImageView) findViewById(R.id.passwordImageView);
+        tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+        tempImageView = (ImageView) findViewById(R.id.emailImageView);
         tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
     }
 
@@ -98,6 +91,8 @@ public class RegisterActivity extends Activity implements View.OnClickListener  
     public void onClick(View view) {
         System.out.println("button clicked " + view.getId());
         switch (view.getId()) {
+            case R.id.backButton:
+                finish();
             case R.id.doneButton:     // done button clicked
                 register();
                 break;
@@ -112,11 +107,8 @@ public class RegisterActivity extends Activity implements View.OnClickListener  
             public void onRequestComplete(String result) {
                 if(result.equals(Configurations.SUCCESS_STATUS_CODE))
                     returnToLoginActivity(newUser.getId());
-                else {
-                    Snackbar snackbar = Snackbar.make(findViewById(R.id.main_content_layout), Messages.DONE_UPLOAD_NEW_SHOUT, Snackbar.LENGTH_SHORT);
-                    snackbar.show();
-                }
-
+                else
+                    showFailedSnackBar();
             }
         };
 
@@ -145,11 +137,20 @@ public class RegisterActivity extends Activity implements View.OnClickListener  
         tempEditText = (EditText) findViewById(R.id.nameAndSurnameEditText);
         String nameAndSurname = tempEditText.getText().toString();
 
+        // read email
+        tempEditText = (EditText) findViewById(R.id.emailEditText);
+        String email = tempEditText.getText().toString();
+
         // get date
         tempEditText = (EditText) findViewById(R.id.passwordEditText);
         String password = tempEditText.getText().toString();
 
-        return App.usersCollections.createNewUser(username, nameAndSurname, password);
+        return App.usersCollections.createNewUser(username, email, nameAndSurname, password);
+    }
+
+    private void showFailedSnackBar(){
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.main_content_layout), Messages.ERROR_UPLOADING_NEW_USER, Snackbar.LENGTH_SHORT);
+        snackbar.show();
     }
 }
 
