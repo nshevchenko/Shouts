@@ -18,7 +18,7 @@ import android.widget.ProgressBar;
 
 import com.nik.shouts.R;
 import com.nik.shouts.auth.Authorization;
-import com.nik.shouts.interfaces.ApiRequestCallback;
+import com.nik.shouts.interfaces.RequestCallback;
 import com.nik.shouts.models.User;
 import com.nik.shouts.models.collections.ShoutsCollections;
 import com.nik.shouts.models.collections.UsersCollections;
@@ -62,7 +62,7 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
 
         // Start to download user's data from API. Once complete callback to open the main Button
 
-        ApiRequestCallback apiCallback = new ApiRequestCallback() {
+        RequestCallback apiCallback = new RequestCallback() {
             @Override
             public void onRequestComplete(String result) {
                 System.out.println(result);
@@ -97,9 +97,9 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
         addPasswordOnTextChangerListener(password);
 
         ImageView tempImageView = (ImageView) findViewById(R.id.nameImageView);
-        tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+        tempImageView.getDrawable().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.SRC_ATOP);
         tempImageView = (ImageView) findViewById(R.id.passwordImageView);
-        tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+        tempImageView.getDrawable().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.SRC_ATOP);
     }
 
     /**
@@ -189,7 +189,7 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
             case Configurations.APP_MODE_TRY_APP_MODE :
                 User newGuest = App.usersCollections.createNewGuest();
                 App.usersCollections.setCurrentLoggedInUser(newGuest);
-                ApiRequestCallback apiCallback = new ApiRequestCallback() {
+                RequestCallback apiCallback = new RequestCallback() {
                     @Override
                     public void onRequestComplete(String result) {
                         openMainActivity(appMode);

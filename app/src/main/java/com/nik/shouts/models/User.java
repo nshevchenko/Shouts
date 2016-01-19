@@ -1,5 +1,7 @@
 package com.nik.shouts.models;
 
+import android.graphics.Bitmap;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
@@ -22,7 +24,9 @@ public class User {
     private String[] friendsIDs;
     private String[] interests;
 
+
     // extra
+    private Bitmap imageProfile;
     private LatLng lastKnownCoordinates;
 
     public User(String id) {
@@ -118,7 +122,6 @@ public class User {
                 if (usersLastAcceptedShouts.size() == limitList)
                     break;
             }
-
         }
         return usersLastAcceptedShouts;
     }
@@ -137,6 +140,10 @@ public class User {
      */
     public LatLng getLastKnownCoordinates() {
         return lastKnownCoordinates;
+    }
+
+    public Bitmap getImageProfile(){
+        return imageProfile;
     }
 
     public String getId() {

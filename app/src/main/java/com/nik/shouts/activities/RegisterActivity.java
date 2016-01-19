@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.nik.shouts.R;
-import com.nik.shouts.interfaces.ApiRequestCallback;
+import com.nik.shouts.interfaces.RequestCallback;
 import com.nik.shouts.models.App;
 import com.nik.shouts.models.User;
 import com.nik.shouts.utils.ApiUtils;
@@ -30,7 +30,13 @@ public class RegisterActivity extends Activity implements View.OnClickListener  
 
     private int[] activity_buttons = {
             R.id.doneButton,
+    };
 
+    private int[] acitivty_images = {
+            R.id.usernameImageView,
+            R.id.nameAndSurnameImageView,
+            R.id.emailImageView,
+            R.id.passwordImageView
     };
 
     @Override
@@ -55,14 +61,10 @@ public class RegisterActivity extends Activity implements View.OnClickListener  
         findViewById(R.id.passwordEditText).setSelected(false);
         findViewById(R.id.emailEditText).setSelected(false);
 
-        ImageView tempImageView = (ImageView) findViewById(R.id.usernameImageView);
-        tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-        tempImageView = (ImageView) findViewById(R.id.nameAndSurnameImageView);
-        tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-        tempImageView = (ImageView) findViewById(R.id.passwordImageView);
-        tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-        tempImageView = (ImageView) findViewById(R.id.emailImageView);
-        tempImageView.getDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+        for (int i = 0; i < acitivty_images.length; i++) {
+            ImageView tempImageView = (ImageView) findViewById(R.id.usernameImageView);
+            tempImageView.getDrawable().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.SRC_ATOP);
+        }
     }
 
 
@@ -102,7 +104,7 @@ public class RegisterActivity extends Activity implements View.OnClickListener  
     public void register(){
         final User newUser = generateUserFromElements();
 
-        ApiRequestCallback apiCallback = new ApiRequestCallback() {
+        RequestCallback apiCallback = new RequestCallback() {
             @Override
             public void onRequestComplete(String result) {
                 if(result.equals(Configurations.SUCCESS_STATUS_CODE))

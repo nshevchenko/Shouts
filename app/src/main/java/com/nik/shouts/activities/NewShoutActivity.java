@@ -5,10 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,6 +16,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -30,7 +32,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 import com.nik.shouts.R;
-import com.nik.shouts.interfaces.ApiRequestCallback;
+import com.nik.shouts.adapters.FeedListAdapter;
+import com.nik.shouts.adapters.UserSearchAutoCompleteAdapter;
+import com.nik.shouts.fragments.DatePickerFragment;
+import com.nik.shouts.fragments.TimePickerFragment;
+import com.nik.shouts.interfaces.RequestCallback;
 import com.nik.shouts.models.Shout;
 import com.nik.shouts.models.App;
 import com.nik.shouts.utils.ApiUtils;
@@ -38,10 +44,8 @@ import com.nik.shouts.utils.Configurations;
 import com.nik.shouts.utils.MapUtils;
 import com.nik.shouts.utils.Messages;
 
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Map;
 
 /**
  * Created by nik on 23/11/15.
@@ -52,6 +56,15 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
     // Activity buttons to received the callback for
     private int[] activity_buttons = {
             R.id.doneButton
+    };
+
+
+    // Activities icons to be read and validated
+    private int[] activity_icons = {
+            R.id.clockDateImg,
+            R.id.limitPeopleImg,
+            R.id.inviteFriendsImg,
+            R.id.hashtagsImg
     };
 
     // Activities edit textes to be read and validated
@@ -116,6 +129,10 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
             Button activity_button = (Button) findViewById(activity_buttons[i]);
             activity_button.setOnClickListener(this);
         }
+        for (int i = 0; i < activity_icons.length; i++) {
+            ImageView tempImageView = (ImageView) findViewById(activity_icons[i]);
+            tempImageView.getDrawable().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.SRC_ATOP);
+        }
         FloatingActionButton button = (FloatingActionButton) findViewById(R.id.search);
         button.setOnClickListener(this);
         findViewById(R.id.dateEditText).setOnClickListener(this);
@@ -124,12 +141,20 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.limitPeopleEditText).setOnClickListener(this);
         findViewById(R.id.hashtagsEditText).setOnClickListener(this);
 
+        AutoCompleteTextView acTextView = (AutoCompleteTextView) findViewById(R.id.inviteFriendsEditText);
+        //Set the number of characters the user must type before the drop down list is shown
+        acTextView.setThreshold(1);
+        //Set the adapter
+
+        acTextView.setAdapter(new UserSearchAutoCompleteAdapter(this.getApplicationContext(), R.layout.user_search_row));
     }
 
 
     @Override
     public void onClick(View view) {
         System.out.println("button clicked " + view.getId());
+        // initiate request callback for dialogs
+        RequestCallback requestCallback = null;
         switch (view.getId()) {
             case R.id.backButton:
                 finish();
@@ -152,16 +177,34 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
                 }
                 break;
             case R.id.dateEditText:
+                requestCallback = new RequestCallback() {
+                    @Override
+                    public void onRequestComplete(String result) {
+                        ((EditText)findViewById(R.id.dateEditText)).setText(result);
+                    }
+                };
+                DatePickerFragment datePicker = new DatePickerFragment();
+                datePicker.setCallback(requestCallback);
+                datePicker.show(getFragmentManager(), "datePicker");
 
                 break;
-            case R.id.emailEditText:
-
+            case R.id.timeEditText:
+                requestCallback = new RequestCallback() {
+                    @Override
+                    public void onRequestComplete(String result) {
+                        ((EditText)findViewById(R.id.timeEditText)).setText(result);
+                    }
+                };
+                TimePickerFragment timePicker  = new TimePickerFragment();
+                timePicker.setCallback(requestCallback);
+                timePicker.show(getFragmentManager(), "timePicker");
                 break;
             case R.id.inviteFriendsEditText:
+
                 break;
             case R.id.limitPeopleEditText:
                 System.out.println("infiltrare");
-
+                showLimitOfPeoplePickerDialog("Select Limit of People");
                 break;
             case R.id.hashtagsEditText:
                 break;
@@ -175,7 +218,7 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
     private void updateStaticMap(LatLng latLng){
         String parameters = MapUtils.getStaticMapFromLatLng(latLng);
 
-        ApiUtils.getPNGBitmap(Configurations.STATIC_MAP_URL + parameters, new ApiRequestCallback() {
+        ApiUtils.getPNGBitmap(Configurations.STATIC_MAP_URL + parameters, new RequestCallback() {
             @Override
             public void onRequestComplete(String result) {
                 Bitmap staticMap = MapUtils.stringToBitMap(result);
@@ -266,5 +309,86 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
 
         return App.shoutsCollections.createNewShout(
                 title, content, creatorId, date, participationLimit, locationName, locationCoordinates);
+    }
+
+    /**
+     * Create and show number picker dialog
+     */
+    private void showLimitOfPeoplePickerDialog(String title){
+        LayoutInflater inflater = (LayoutInflater)
+                getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View npView = inflater.inflate(R.layout.number_picker_dialog_layout, null);
+        final NumberPicker numberPicker = (NumberPicker) npView.findViewById(R.id.numberPicker1);
+
+        numberPicker.setMaxValue(50);
+        numberPicker.setMinValue(0);
+        setDividerColor(numberPicker, getResources().getColor(R.color.colorPrimary));
+        numberPicker.setWrapSelectorWheel(false);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setView(npView)
+                .setPositiveButton("Ok",  new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int buttonId) {
+                        updateLimitOfPeopleEditText(numberPicker.getValue());
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int buttonId) {
+                                dialog.dismiss();
+                            }
+                        })
+                .create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+                AlertDialog alertDialog = (AlertDialog) dialog;
+                Button button = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                button.setTextColor(getResources().getColor(R.color.colorPrimary));
+                button = alertDialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+                button.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+            }
+        });
+        dialog.show();
+        //}
+    }
+
+    /**
+     * update limit of people edit text
+     * @param numberPickerValue
+     */
+    private void updateLimitOfPeopleEditText(int numberPickerValue){
+        ((EditText)findViewById(R.id.limitPeopleEditText)).setText(numberPickerValue);
+    }
+
+    /**
+     * change color of the dividers in the numberpicker dialog
+     * @param picker
+     * @param color
+     */
+    private void setDividerColor(NumberPicker picker, int color) {
+
+        java.lang.reflect.Field[] pickerFields = NumberPicker.class.getDeclaredFields();
+        for (java.lang.reflect.Field pf : pickerFields) {
+            if (pf.getName().equals("mSelectionDivider")) {
+                pf.setAccessible(true);
+                try {
+                    ColorDrawable colorDrawable = new ColorDrawable(color);
+                    pf.set(picker, colorDrawable);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (Resources.NotFoundException e) {
+                    e.printStackTrace();
+                }
+                catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }
     }
 }

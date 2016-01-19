@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.nik.shouts.R;
 import com.nik.shouts.adapters.SectionsPagerAdapter;
 import com.nik.shouts.fragments.FragmentUserDetails;
-import com.nik.shouts.interfaces.ApiRequestCallback;
+import com.nik.shouts.interfaces.RequestCallback;
 import com.nik.shouts.models.App;
 import com.nik.shouts.models.Shout;
 import com.nik.shouts.utils.ApiUtils;
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSectionsPagerAdapter.notifyDataSetChanged();
 //        MapUtils.updateMap();
 //        this.getSupportFragmentManager().
-        ApiRequestCallback apiCallback = new ApiRequestCallback() {
+        RequestCallback apiCallback = new RequestCallback() {
             @Override
             public void onRequestComplete(String result) {
 //                if()

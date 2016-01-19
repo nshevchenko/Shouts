@@ -3,49 +3,36 @@ package com.nik.shouts.interfaces;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.Base64;
 
-import com.nik.shouts.utils.Configurations;
 import com.nik.shouts.utils.MapUtils;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class HttpRequestCallback extends AsyncTask<String, Void, String>
 {
     private String requestType = "";
-    private ApiRequestCallback apiRequestCallback;
+    private RequestCallback requestCallback;
     private String postJsonObj;
 
-    public HttpRequestCallback(ApiRequestCallback apiRequestCallback, String requestType) {
-        this.apiRequestCallback = apiRequestCallback;
+    public HttpRequestCallback(RequestCallback requestCallback, String requestType) {
+        this.requestCallback = requestCallback;
         this.requestType = requestType;
     }
 
-    public HttpRequestCallback(ApiRequestCallback apiRequestCallback, String requestType, String postJsonObj) {
-        this.apiRequestCallback = apiRequestCallback;
+    public HttpRequestCallback(RequestCallback requestCallback, String requestType, String postJsonObj) {
+        this.requestCallback = requestCallback;
         this.requestType = requestType;
         this.postJsonObj = postJsonObj;
     }
@@ -136,6 +123,6 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
     protected void onPostExecute(String result)
     {
         System.out.println("RESULT API " + result);
-        apiRequestCallback.onRequestComplete(result);
+        requestCallback.onRequestComplete(result);
     }
 }

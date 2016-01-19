@@ -48,8 +48,9 @@ public class Configurations {
 
 
     // DATE
-    public static final DateFormat DATE_FORMAT_SHOUT_CREATION_DB = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
-    public static final DateFormat DATE_FORMAT_SHOUT_CREATION_USER = new SimpleDateFormat("EEE, MMM d, ''yy");
+    public static final DateFormat DATE_TIME_FORMAT_SHOUT_CREATION_DB = new SimpleDateFormat("yyyy.mm.dd HH:mm:ss");
+    public static final DateFormat DATE_FORMAT_SHOUT_CREATION_DB = new SimpleDateFormat("yyyy.mm.dd");
+    public static final DateFormat DATE_FORMAT_SHOUT_CREATION_USER = new SimpleDateFormat("EEE, MMM d, yyyy");
 
 
     // INIT SOME DUMB DATA

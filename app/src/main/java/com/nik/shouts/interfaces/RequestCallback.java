@@ -8,6 +8,6 @@ import java.io.Serializable;
  * Created by nik on 14/12/15.
  */
 
-public interface ApiRequestCallback extends Serializable {
+public interface RequestCallback extends Serializable {
         public void onRequestComplete(String result);
 }

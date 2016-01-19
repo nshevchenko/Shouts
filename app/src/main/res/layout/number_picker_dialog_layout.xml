@@ -1,13 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="100dp"
-    android:layout_height="300dp" >
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:theme="@style/AppTheme">
 
     <NumberPicker
         android:id="@+id/numberPicker1"
-        android:layout_width="100dp"
-        android:layout_height="300dp"
+        android:theme="@style/AppTheme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="64dp" />
+        android:layout_marginTop="64dp"
+
+        android:showDividers="middle" />
 
 </RelativeLayout>

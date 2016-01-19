@@ -5,17 +5,13 @@ import android.app.Activity;
 
 import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
-import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 
 import com.nik.shouts.R;
-import com.nik.shouts.interfaces.ApiRequestCallback;
-import com.nik.shouts.interfaces.HttpRequestCallback;
 import com.nik.shouts.models.collections.ShoutsCollections;
 import com.nik.shouts.models.collections.UsersCollections;
-import com.nik.shouts.utils.ApiUtils;
 
 /**
  * Created by nik on 23/11/15.
@@ -67,5 +63,5 @@ public class App {
         act.startActivity(newIntent);
     }
 
-    
+
 }

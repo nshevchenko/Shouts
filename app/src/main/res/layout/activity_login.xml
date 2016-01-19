@@ -71,16 +71,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text|textEmailAddress"
-                    android:hint="Email"
+                    android:hint="username"
                     android:textAlignment="textStart"
                     android:layout_marginTop="10dp"
-                    android:theme="@style/WhiteEditTextTheme"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textColorHint="@color/colorPrimaryDark"
+                    android:theme="@style/RedEditTextTheme"
+                    android:textColor="@color/colorPrimary"
+                    android:textColorHint="@color/colorPrimaryLight"
                     android:visibility="visible"
-                    android:layout_marginLeft="5dp"
+                    android:layout_marginLeft="42dp"
                     android:layout_marginRight="5dp"
-                    android:layout_toRightOf="@+id/nameImageView"
                     android:layout_centerVertical="true" />
 
             </RelativeLayout>
@@ -111,15 +110,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Password"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginLeft="42dp"
                     android:layout_marginRight="5dp"
-                    android:theme="@style/WhiteEditTextTheme"
-                    android:textColorHint="@color/colorPrimaryDark"
+                    android:theme="@style/RedEditTextTheme"
+                    android:textColorHint="@color/colorPrimaryLight"
                     android:textAlignment="textStart"
                     android:textStyle="italic"
                     android:visibility="visible"
-                    android:layout_toRightOf="@+id/passwordImageView"
                     android:inputType="textPassword"
                     android:layout_centerVertical="true" />
             </RelativeLayout>
@@ -155,15 +153,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="LOGIN"
-            android:background="@drawable/round_corners_button"
             android:id="@+id/doneButton"
             android:layout_gravity="center_horizontal"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorPrimary"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="15dp"
             android:visibility="visible"
-            android:layout_below="@+id/passwordLayout" />
+            android:layout_below="@+id/passwordLayout"
+            android:background="@drawable/round_corners_button" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -179,7 +177,7 @@
 
             <View
                 android:id="@+id/separatorLeft"
-                android:background="@color/colorPrimaryDark"
+                android:background="@color/colorPrimary"
                 android:layout_width = "0dp"
                 android:layout_weight="0.35"
                 android:layout_height="1dip"
@@ -194,7 +192,7 @@
                 android:layout_weight="0.2"
                 android:id="@+id/or"
                 android:layout_gravity="center_horizontal"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/colorPrimary"
                 android:textSize="20sp"
                 android:textAlignment="center" />
 
@@ -203,7 +201,7 @@
                 android:layout_height="1dip"
                 android:layout_weight="0.35"
                 android:id="@+id/separatorRight"
-                android:background="@color/colorPrimaryDark"
+                android:background="@color/colorPrimary"
                 android:layout_centerVertical ="true"
                 android:layout_alignParentTop="true"
                 android:layout_gravity="center_vertical" />
@@ -245,7 +243,7 @@
                 android:background="@drawable/round_corners_button"
                 android:layout_marginLeft="5dp"
                 android:textSize="16sp"
-                android:textColor="@color/colorPrimaryDark" />
+                android:textColor="@color/colorPrimary" />
         </LinearLayout>
     </RelativeLayout>
     <View
@@ -266,7 +264,7 @@
         android:text="New? Register here."
         android:id="@+id/registerUserTextView"
         android:layout_gravity="center_horizontal"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/colorAccent"
         android:textSize="15sp"
         android:clickable="true"
         android:onClick="onClick"

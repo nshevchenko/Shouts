@@ -4,18 +4,13 @@ import android.util.Log;
 
 import com.nik.shouts.interfaces.*;
 import com.nik.shouts.models.App;
-import com.nik.shouts.models.Shout;
-import com.nik.shouts.models.User;
-import com.nik.shouts.models.collections.UsersCollections;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by nik on 14/12/15.
@@ -109,7 +104,7 @@ public class ApiUtils {
      * GET REQUEST
      * @param apiFinalCallback
      */
-    public static void getRequestWithCallBack(String url, final ApiRequestCallback apiFinalCallback) {
+    public static void getRequestWithCallBack(String url, final RequestCallback apiFinalCallback) {
         // download users
         HttpRequestCallback httpRequest = new HttpRequestCallback(apiFinalCallback, "GET");
         httpRequest.execute(url);
@@ -119,7 +114,7 @@ public class ApiUtils {
      * GET REQUEST AND DOWNLOAD PNG
      * @param apiFinalCallback
      */
-    public static void getPNGBitmap(String url, final ApiRequestCallback apiFinalCallback) {
+    public static void getPNGBitmap(String url, final RequestCallback apiFinalCallback) {
         // download users
         HttpRequestCallback httpRequest = new HttpRequestCallback(apiFinalCallback, "GET RAW");
         httpRequest.execute(url);
@@ -130,7 +125,7 @@ public class ApiUtils {
      * @param uploadCallback
      * @param jsonNewObject
      */
-    public static void uploadNewJsonObject(ApiRequestCallback uploadCallback, String jsonNewObject) {
+    public static void uploadNewJsonObject(RequestCallback uploadCallback, String jsonNewObject) {
         HttpRequestCallback httpRequest = new HttpRequestCallback(uploadCallback, "POST", jsonNewObject);
         httpRequest.execute("http://lionsrace.altervista.org/apiShouts.php");
     }
