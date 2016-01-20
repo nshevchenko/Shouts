@@ -3,11 +3,16 @@ package com.nik.shouts.models;
 import android.graphics.Bitmap;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.nik.shouts.utils.ApiUtils;
+import com.nik.shouts.utils.Configurations;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by nik on 23/11/15.
@@ -23,19 +28,26 @@ public class User {
     private String nameAndSurname;
     private String[] friendsIDs;
     private String[] interests;
-
+    private Calendar createdDt;
 
     // extra
     private Bitmap imageProfile;
     private LatLng lastKnownCoordinates;
+    private ArrayList<User> friends;
 
     public User(String id) {
         this.id = id;
         this.username = "Guest";
-        this.email = "Guest";
         this.nameAndSurname = "Guest User";
         this.friendsIDs = new String[]{};
         this.interests = new String[]{};
+        this.createdDt = Calendar.getInstance();
+        this.friends = new ArrayList<>();
+    }
+
+    public User(JSONObject jsonObject){
+        parseUserJson(jsonObject);
+        this.friends = new ArrayList<>();
     }
 
     public User(String id, String username, String email, String nameAndSurname, String password, String[] friendsIDs, String[] interests) {
@@ -46,6 +58,7 @@ public class User {
         this.password = password;
         this.friendsIDs = friendsIDs;
         this.interests = interests;
+        this.friends = new ArrayList<>();
     }
 
     public String getInterestsAsString() {
@@ -58,6 +71,18 @@ public class User {
             interestsStr += interests[i] + ", ";
         }
         return interestsStr;
+    }
+
+    public String getFriendsIDsAsString(){
+        String friendsStr = "";
+
+        if(getFriendsIDs().length == 0)
+            return "";
+
+        for(int i = 0; i < getFriendsIDs().length; i++){
+            friendsStr += getFriendsIDs()[i] + ", ";
+        }
+        return friendsStr;
     }
 
     /**
@@ -76,14 +101,13 @@ public class User {
         JSONObject resultJson = new JSONObject();
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("email", getEmail());
-            jsonObject.put("username", getUsername());
-            jsonObject.put("password", getPassword());
-            jsonObject.put("nameAndSurname", getNameAndSurname());
-            System.out.println("friendsIDs ids " + getFriendsIDs().toString());
-            jsonObject.put("friendsIDs", getFriendsIDs().toString());
-            System.out.println("interests " + getInterestsAsString());
-            jsonObject.put("interests", getInterestsAsString());
+            jsonObject.put("email", getEmail())
+                .put("username", getUsername())
+                    .put("password", getPassword())
+                    .put("nameAndSurname", getNameAndSurname())
+                    .put("friendsIDs", getFriendsIDsAsString())
+                    .put("interests", getInterestsAsString())
+                    .put("create_dt", ApiUtils.getToday((SimpleDateFormat) Configurations.DATE_TIME_FORMAT_DB));
             resultJson.put("user", jsonObject);
             return resultJson.toString();
         } catch (JSONException e) {
@@ -132,6 +156,14 @@ public class User {
      */
     public void setLastKnownCoordinates(LatLng lastKnownCoordinates) {
         this.lastKnownCoordinates = lastKnownCoordinates;
+    }
+
+    /**
+     * Set array list friends
+     * @param friends
+     */
+    public void setFriends(ArrayList<User> friends){
+        this.friends = friends;
     }
 
     /**
@@ -184,4 +216,32 @@ public class User {
         return friendsIDs;
     }
 
+    public ArrayList<User> getFriends(){
+        return friends;
+    }
+
+    // JSON PARSER
+
+    private void parseUserJson(JSONObject jsonObj){
+        // parse single values
+
+        try {
+            id = jsonObj.getString("id");
+            password = jsonObj.getString("password");
+            username = jsonObj.getString("username");
+            email = jsonObj.getString("email");
+            nameAndSurname = jsonObj.getString("nameAndSurname");
+            String friendsStr = jsonObj.getString("friendsIDs");
+            friendsIDs = friendsStr.split(",");
+            String createdDtStr = jsonObj.getString("created_dt");
+            createdDt.setTime(Configurations.DATE_FORMAT_SHOUT_CREATION_DB.parse(createdDtStr));
+            String interestsStr = jsonObj.getString("interests");
+            interests = interestsStr.split(",");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        System.out.println("email " + email);
+    }
 }

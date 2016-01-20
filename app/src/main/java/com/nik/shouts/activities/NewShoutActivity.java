@@ -146,7 +146,7 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
         acTextView.setThreshold(1);
         //Set the adapter
 
-        acTextView.setAdapter(new UserSearchAutoCompleteAdapter(this.getApplicationContext(), R.layout.user_search_row));
+        acTextView.setAdapter(new UserSearchAutoCompleteAdapter(this.getApplicationContext(), R.layout.user_search_row, App.usersCollections.getUsers()));
     }
 
 

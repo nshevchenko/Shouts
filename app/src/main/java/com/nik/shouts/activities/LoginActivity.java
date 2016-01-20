@@ -184,6 +184,7 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
                     snackbar.show();
                     return; // don't login if credentials are wrong
                 }
+
                 break;
 
             case Configurations.APP_MODE_TRY_APP_MODE :
