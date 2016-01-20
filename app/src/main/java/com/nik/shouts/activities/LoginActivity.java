@@ -231,7 +231,7 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
                     User currentNewUser = UserUtils.getUserById(newUserId);
                     try {
                         System.out.println("currentNewUser" + currentNewUser.getNameAndSurname());
-                        ((EditText) findViewById(R.id.usernameEditText)).setText(currentNewUser.getEmail());
+                        ((EditText) findViewById(R.id.usernameEditText)).setText(currentNewUser.getUsername());
                     } catch (NullPointerException ex) {
                         ex.printStackTrace();
                     }

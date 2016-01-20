@@ -49,10 +49,10 @@ public class ShoutsCollections {
      * @param locationCoordinates
      * @return
      */
-    public Shout createNewShout(String title, String content, String creatorId, Calendar date, int participationLimit, String locationName, String locationCoordinates) {
+    public Shout createNewShout(String title, String content, String creatorId, Calendar date, int participationLimit, String locationName, String locationCoordinates, String[] hashtags) {
         String newShoutID = (shouts.size() - 1) + "";
         Calendar createDt = Calendar.getInstance();
-        Shout newShout = new Shout(newShoutID, title, content, creatorId, createDt, date, participationLimit, locationName, locationCoordinates);
+        Shout newShout = new Shout(newShoutID, title, content, creatorId, createDt, date, participationLimit, locationName, locationCoordinates, hashtags);
         addShout(newShout);
         return newShout;
     }

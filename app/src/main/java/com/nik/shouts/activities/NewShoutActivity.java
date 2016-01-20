@@ -297,18 +297,24 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
         String participationLimitStr = tempEditText.getText().toString();
         int participationLimit = Integer.parseInt(participationLimitStr);
 
+        // creator
         String creatorId = App.usersCollections.getCurrentlyLoggedInUser().getId();
 
+        // location
         String locationName = "";
         String locationCoordinates = "";
         if(shoutLocationPlace != null) {
             locationName = shoutLocationPlace.getName().toString();
-            locationCoordinates = shoutLocationPlace.getLatLng().toString();
+            locationCoordinates = shoutLocationPlace.getLatLng().latitude + "," + shoutLocationPlace.getLatLng().longitude;
             System.out.println("Location name : " + locationName + ", /n coordinate: " + shoutLocationPlace.getLatLng().toString());
         }
 
+        // hashtags
+        String hashtagsStr = ((EditText)findViewById(R.id.hashtagsEditText)).getText().toString();
+        String[] hashtags = hashtagsStr.split(",");
+        System.out.println("hashtags  " + hashtagsStr);
         return App.shoutsCollections.createNewShout(
-                title, content, creatorId, date, participationLimit, locationName, locationCoordinates);
+                title, content, creatorId, date, participationLimit, locationName, locationCoordinates, hashtags);
     }
 
     /**
@@ -324,13 +330,14 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
         numberPicker.setMinValue(0);
         setDividerColor(numberPicker, getResources().getColor(R.color.colorPrimary));
         numberPicker.setWrapSelectorWheel(false);
-        AlertDialog dialog = new AlertDialog.Builder(this)
+        AlertDialog dialog = new AlertDialog.Builder(NewShoutActivity.this)
                 .setTitle(title)
                 .setView(npView)
                 .setPositiveButton("Ok",  new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int buttonId) {
-                        updateLimitOfPeopleEditText(numberPicker.getValue());
                         dialog.dismiss();
+                        updateLimitOfPeopleEditText(numberPicker.getValue());
+
                     }
                 })
                 .setNegativeButton("Cancel",
@@ -362,7 +369,8 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
      * @param numberPickerValue
      */
     private void updateLimitOfPeopleEditText(int numberPickerValue){
-        ((EditText)findViewById(R.id.limitPeopleEditText)).setText(numberPickerValue);
+        System.out.println("numberPickerValue " + numberPickerValue);
+                ((EditText) findViewById(R.id.limitPeopleEditText)).setText(numberPickerValue);
     }
 
     /**

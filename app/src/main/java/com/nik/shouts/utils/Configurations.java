@@ -42,7 +42,7 @@ public class Configurations {
     public static final String REQUEST_STRING_NEW_USER_ID = "new_user_id";
 
 
-    public static final String SUCCESS_STATUS_CODE = "200";
+    public static final String SUCCESS_STATUS_CODE = "Insert Complete";
     public static final String REMOTE_SERVER_URL = "http://lionsrace.altervista.org/apiShouts.php";
     public static final String STATIC_MAP_URL = "http://maps.google.com/maps/api/staticmap";
 

@@ -233,8 +233,11 @@ public class User {
             nameAndSurname = jsonObj.getString("nameAndSurname");
             String friendsStr = jsonObj.getString("friendsIDs");
             friendsIDs = friendsStr.split(",");
-            String createdDtStr = jsonObj.getString("created_dt");
-            createdDt.setTime(Configurations.DATE_FORMAT_SHOUT_CREATION_DB.parse(createdDtStr));
+            String createdDtStr = jsonObj.getString("create_dt");
+            if(createdDtStr != null) {
+                createdDt = Calendar.getInstance();
+                createdDt.setTime(Configurations.DATE_FORMAT_SHOUT_CREATION_DB.parse(createdDtStr));
+            }
             String interestsStr = jsonObj.getString("interests");
             interests = interestsStr.split(",");
         } catch (JSONException e) {

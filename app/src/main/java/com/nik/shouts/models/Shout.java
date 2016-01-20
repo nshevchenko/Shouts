@@ -31,6 +31,7 @@ public class Shout {
     private String locationName;
     private int participationLimit;
     private String locationCoordinates;
+    private String[] hashtags;
 
     /**
      * Create shout from a jsonObject and parse its json
@@ -51,7 +52,7 @@ public class Shout {
      * @param locationName
      * @param locationCoordinates
      */
-    public Shout(String id, String title, String content, String creatorId, Calendar createdDt, Calendar date, int participationLimit, String locationName, String locationCoordinates) {
+    public Shout(String id, String title, String content, String creatorId, Calendar createdDt, Calendar date, int participationLimit, String locationName, String locationCoordinates, String[] hashtags) {
         this.id = id;
         this.content = content;
         this.title = title;
@@ -62,6 +63,7 @@ public class Shout {
         this.locationName = locationName;
         this.locationCoordinates = locationCoordinates;
         this.participationsIDs = new ArrayList<>();
+        this.hashtags = hashtags;
     }
 
     /**
@@ -75,7 +77,7 @@ public class Shout {
      * @param locationName
      * @param locationCoordinates
      */
-    public Shout(String title, String content, String creatorId, Calendar createdDt, Calendar date, int participationLimit, String locationName, String locationCoordinates) {
+    public Shout(String title, String content, String creatorId, Calendar createdDt, Calendar date, int participationLimit, String locationName, String locationCoordinates, String[] hashtags) {
         this.title = title;
         this.content = content;
         this.creatorId = creatorId;
@@ -85,6 +87,7 @@ public class Shout {
         this.locationName = locationName;
         this.locationCoordinates = locationCoordinates;
         this.participationsIDs = new ArrayList<>();
+        this.hashtags = hashtags;
     }
 
     /**
@@ -100,7 +103,7 @@ public class Shout {
      * @param locationName
      * @param locationCoordinates
      */
-    public Shout(String id, String title, String content, String creatorId, Calendar createdDt, Calendar date, int participationLimit, ArrayList<String> participationsIDs, String locationName, String locationCoordinates) {
+    public Shout(String id, String title, String content, String creatorId, Calendar createdDt, Calendar date, int participationLimit, ArrayList<String> participationsIDs, String locationName, String locationCoordinates, String[] hashtags) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -112,6 +115,7 @@ public class Shout {
         this.locationName = locationName;
         this.locationCoordinates = locationCoordinates;
         this.participationsIDs = new ArrayList<>();
+        this.hashtags = hashtags;
     }
 
     public void parseJsonShout(JSONObject jsonObj){
@@ -129,19 +133,29 @@ public class Shout {
                 participationsIDs.add(participant);
 
             // create date time
-            createdDt = Calendar.getInstance();
-            createdDt.setTime(Configurations.DATE_FORMAT_SHOUT_CREATION_DB.parse(jsonObj.getString("created_dt")));
-
+            String createDtStr = jsonObj.getString("create_dt");
+            if(createDtStr != null) {
+                createdDt = Calendar.getInstance();
+                createdDt.setTime(Configurations.DATE_FORMAT_SHOUT_CREATION_DB.parse(createDtStr));
+            }
             // date of the shout
             String dateStr = jsonObj.getString("date");
-            date = Calendar.getInstance();
-            date.setTime(Configurations.DATE_FORMAT_SHOUT_CREATION_DB.parse(dateStr));
+            if (dateStr != null) {
+                date = Calendar.getInstance();
+                date.setTime(Configurations.DATE_FORMAT_SHOUT_CREATION_DB.parse(dateStr));
+            }
 
             // participation limit
             String participationLimitStr = jsonObj.getString("participationLimit");
             participationLimit = Integer.parseInt(participationLimitStr);
+
+            //location
             locationName = jsonObj.getString("locationName");
             locationCoordinates = jsonObj.getString("locationCoordinates");
+
+            // hashtags
+            hashtags = jsonObj.getString("hashtags").split(",");
+
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -173,11 +187,12 @@ public class Shout {
             .put("content", getContent())
             .put("creatorID", getCreatorId())
             .put("participationsIDs", getParticipationsIDs().toString())
-            .put("date", "Today")
-            .put("create_dt", getCreatedDt())
+            .put("date", Configurations.DATE_FORMAT_SHOUT_CREATION_DB.format(getDate().getTime()))
+            .put("create_dt", Configurations.DATE_FORMAT_SHOUT_CREATION_DB.format(getCreatedDt().getTime()))
             .put("locationCoordinates", getLocationCoordinates())
             .put("locationName", getLocationName())
-            .put("participationLimit", getParticipationLimit());
+            .put("participationLimit", getParticipationLimit())
+                    .put("hashtags", getHashtagsAsString());
             resultJson.put("shout", newShoutJson);
             return resultJson.toString();
         } catch (JSONException e) {
@@ -199,15 +214,21 @@ public class Shout {
 
     // GETTERS
 
-    public Calendar getCreatedDt(){
-        return createdDt;
-    }
-    public int getParticipationLimit(){
-        return participationLimit;
+
+    public String getHashtagsAsString(){
+        if(hashtags.length == 0)
+            return "";
+        String result = "";
+        for (int i = 0; i < hashtags.length - 1; i++)
+            result += hashtags[i] + ", ";
+        result += hashtags[hashtags.length - 1];
+        return result;
     }
 
-    public User getCreator() {
-        return UserUtils.getUserById(creatorId);
+    public String getDateStrShout() {
+        if(date == null)
+            return "...";
+        return Configurations.DATE_FORMAT_SHOUT_CREATION_USER.format(date.getTime());
     }
 
     public ArrayList<String> getParticipationsIDs() {
@@ -218,28 +239,25 @@ public class Shout {
         return date;
     }
 
-    public String getDateStrShout() {
-        if(date == null)
-            return "...";
-        return Configurations.DATE_FORMAT_SHOUT_CREATION_USER.format(date.getTime());
-    }
+    public Calendar getCreatedDt(){ return createdDt;}
 
-    public String getCreatorId() {
-        return creatorId;
-    }
+    public String getId() { return id;}
 
-    public String getId() {
-        return id;
-    }
-
-    public String getContent() {
-        return content;
-    }
+    public String getContent() { return content;}
 
     public String getLocationName() { return locationName; }
 
+    public User getCreator() {  return UserUtils.getUserById(creatorId);}
+
+    public String getCreatorId() {  return creatorId; }
+
     public String getTitle() { return title; }
+
+    public int getParticipationLimit(){
+        return participationLimit;
+    }
 
     public String getLocationCoordinates() { return locationCoordinates; }
 
+    public String[] getHashtags(){  return hashtags; }
 }
