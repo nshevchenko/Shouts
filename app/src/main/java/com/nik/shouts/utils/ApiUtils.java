@@ -3,8 +3,11 @@ package com.nik.shouts.utils;
 import android.text.format.DateFormat;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.nik.shouts.interfaces.*;
 import com.nik.shouts.models.App;
+import com.nik.shouts.models.PlaceResult;
+import com.nik.shouts.models.SearchResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,11 +30,9 @@ public class ApiUtils {
      */
     public static void parseAppData(String jsonDataStr) {
         try {
-            System.out.println("result " + jsonDataStr);
             JSONObject mainObject = new JSONObject(jsonDataStr);
-            System.out.println("0");
-            App.usersCollections.parseJsonUsers(mainObject);
-            App.shoutsCollections.parseJsonShouts(mainObject);
+            UserUtils.parseJsonUsers(mainObject);
+            ShoutsUtils.parseJsonShouts(mainObject);
         } catch (JSONException jsonEx) {
             Log.d("LOG", "Json parsing error");
         }
@@ -74,6 +75,42 @@ public class ApiUtils {
     public static String getToday(SimpleDateFormat format){
         Calendar todayCalendar = Calendar.getInstance();
         return format.format(todayCalendar.getTime());
+    }
+
+    public static String createUrlForPlaceSearch(String search){
+        // get current user last location
+        String locationParamter = "";
+        LatLng loc = App.usersCollections.getCurrentlyLoggedInUser().getLastKnownCoordinates();
+
+        String parameter = "?location=" + loc.latitude + "," +loc.longitude
+                + "&radius=20000&query=" + search.replace(" ", "+")
+                + "&key=" + Configurations.GOOGLE_API_KEY;
+
+        return parameter;
+    }
+
+    /**
+     * Parse json from place search and resutrn an search result array
+     * @param placesResultStr
+     * @return
+     */
+    public static ArrayList<SearchResult> parsePlacesResult(String placesResultStr){
+        ArrayList<SearchResult> searchResults= new ArrayList<>();
+        try {
+            JSONObject placesResult = new JSONObject(placesResultStr);
+            JSONArray results = placesResult.getJSONArray("results");
+            for(int i = 0; i < results.length(); i++) {
+                JSONObject resJson = results.getJSONObject(i);
+                String name = resJson.getString("name");
+                JSONObject location = resJson.getJSONObject("geometry").getJSONObject("location");
+                String coordinates = location.getString("lat") + "," + location.getString("lng");
+                String address = resJson.getString("formatted_address");
+                searchResults.add(new PlaceResult("", null, name, address, coordinates));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return searchResults;
     }
 
 

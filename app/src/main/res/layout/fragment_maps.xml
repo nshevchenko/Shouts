@@ -8,7 +8,7 @@
         android:id="@+id/map"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:clickable="false" />
+        />
 
     <FrameLayout
         android:layout_width="60dp"

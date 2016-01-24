@@ -24,8 +24,8 @@ public class UsersCollections {
         users = new ArrayList<User>();
     }
 
-    // add Data to arrays
-    public void addUser(User user){
+    // add Data to arrays only from the factory method createNewUser
+    private void addUser(User user){
         users.add(user);
     }
 
@@ -67,7 +67,7 @@ public class UsersCollections {
      */
     public User createNewUser(String username, String email, String nameAndSurname, String password) {
         String newUserID = users.size() + "";
-        User user = new User(newUserID, username, email, nameAndSurname, password, new String[]{}, new String[]{});
+        User user = new User(newUserID, username, email, nameAndSurname, password, new String[]{""}, new String[]{""});
         addUser(user);
         return user;
     }
@@ -78,21 +78,6 @@ public class UsersCollections {
         addUser(user);
         return user;
     }
-
-    /**
-     * Prase users initial json object
-     * @param mainObject
-     * @throws JSONException
-     */
-    public void parseJsonUsers(JSONObject mainObject) throws JSONException {
-        JSONArray users = mainObject.getJSONArray("users");
-        for(int i = 0; i < users.length(); i++) {
-            JSONObject jsonObj = users.getJSONObject(i);
-            // create the user and add to app's data
-            createNewUser(jsonObj);
-        }
-    }
-
 
     /**
      * create new guest as a user

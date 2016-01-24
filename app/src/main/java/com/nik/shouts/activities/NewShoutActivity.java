@@ -68,14 +68,13 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
     };
 
     // Activities edit textes to be read and validated
-    private int[] activity_newShout_editText = {
+    private int[] activity_editText = {
             R.id.titleEditText,
             R.id.descriptionEditText,
             R.id.dateEditText,
             R.id.timeEditText,
-            R.id.limitPeopleTextView,
-            R.id.invitePeopleTextView,
-            R.id.inviteFriendsEditText
+            R.id.limitPeopleEditText,
+            R.id.hashtagsEditText
     };
 
     // map
@@ -133,13 +132,14 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
             ImageView tempImageView = (ImageView) findViewById(activity_icons[i]);
             tempImageView.getDrawable().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.SRC_ATOP);
         }
+
+        for (int i = 0; i < activity_icons.length; i++) {
+            EditText tempEditText = (EditText) findViewById(activity_editText[i]);
+            tempEditText.setOnClickListener(this);
+        }
+
         FloatingActionButton button = (FloatingActionButton) findViewById(R.id.search);
         button.setOnClickListener(this);
-        findViewById(R.id.dateEditText).setOnClickListener(this);
-        findViewById(R.id.timeEditText).setOnClickListener(this);
-        findViewById(R.id.inviteFriendsEditText).setOnClickListener(this);
-        findViewById(R.id.limitPeopleEditText).setOnClickListener(this);
-        findViewById(R.id.hashtagsEditText).setOnClickListener(this);
 
         AutoCompleteTextView acTextView = (AutoCompleteTextView) findViewById(R.id.inviteFriendsEditText);
         //Set the number of characters the user must type before the drop down list is shown
@@ -337,7 +337,6 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
                     public void onClick(DialogInterface dialog, int buttonId) {
                         dialog.dismiss();
                         updateLimitOfPeopleEditText(numberPicker.getValue());
-
                     }
                 })
                 .setNegativeButton("Cancel",
@@ -370,7 +369,12 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
      */
     private void updateLimitOfPeopleEditText(int numberPickerValue){
         System.out.println("numberPickerValue " + numberPickerValue);
-                ((EditText) findViewById(R.id.limitPeopleEditText)).setText(numberPickerValue);
+        EditText limitPeopleEditText = (EditText) findViewById(R.id.limitPeopleEditText);
+        if (limitPeopleEditText != null) {
+            System.out.println("life not null");
+            limitPeopleEditText.setText(numberPickerValue + "");
+        }else
+            System.out.println("no life");
     }
 
     /**

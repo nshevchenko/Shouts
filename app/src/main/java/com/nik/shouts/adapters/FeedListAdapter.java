@@ -41,7 +41,7 @@ public class FeedListAdapter extends ArrayAdapter<Shout>{
         }
 
         View tempShoutViewObject = (TextView)convertView.findViewById(R.id.username);
-//        ((TextView)tempShoutViewObject).setText(shout.getUser().getNameAndSurname());
+        ((TextView)tempShoutViewObject).setText(shout.getCreator().getNameAndSurname());
 
         tempShoutViewObject = (TextView)convertView.findViewById(R.id.title);
         ((TextView)tempShoutViewObject).setText(shout.getTitle());
@@ -50,7 +50,7 @@ public class FeedListAdapter extends ArrayAdapter<Shout>{
         ((TextView)tempShoutViewObject).setText(shout.getContent());
 
         tempShoutViewObject  = (TextView)convertView.findViewById(R.id.date);
-        ((TextView)tempShoutViewObject).setText(shout.getDateStrShout());
+        ((TextView)tempShoutViewObject).setText(shout.getDateAsStringInList());
 
         tempShoutViewObject  = (TextView)convertView.findViewById(R.id.location);
         ((TextView)tempShoutViewObject).setText(shout.getLocationName());

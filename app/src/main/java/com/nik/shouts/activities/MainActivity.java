@@ -15,14 +15,19 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.nik.shouts.R;
 import com.nik.shouts.adapters.SectionsPagerAdapter;
+import com.nik.shouts.fragments.FragmentFeed;
+import com.nik.shouts.fragments.FragmentMaps;
 import com.nik.shouts.fragments.FragmentUserDetails;
 import com.nik.shouts.interfaces.RequestCallback;
 import com.nik.shouts.models.App;
 import com.nik.shouts.models.Shout;
 import com.nik.shouts.utils.ApiUtils;
 import com.nik.shouts.utils.Configurations;
+import com.nik.shouts.utils.MapUtils;
+import com.nik.shouts.utils.ShoutsUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -82,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             TextView nameTextView = (TextView) findViewById(R.id.nameTextView);
             nameTextView.setText(App.usersCollections.getCurrentlyLoggedInUser().getName());
         }
-
     }
 
     @Override
@@ -109,15 +113,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        RequestCallback requestCallback = null;
         switch (view.getId()) {
             case R.id.create:
                 App.openActivityAsParent(this, NewShoutActivity.class, Configurations.REQUEST_CODE_PARENT_NEW_SHOUT_ACTIVITIY);
                 break;
             case R.id.searchEditText:
-                App.openActivityAsParent(this, SearchActivity.class, Configurations.REQUEST_CODE_PARENT_NEW_SEARCH_ACTIVITIY);
+                // open only if user's last location available
+                if(App.usersCollections.getCurrentlyLoggedInUser().getLastKnownCoordinates() != null)
+                    App.openActivityAsParent(this, SearchActivity.class, Configurations.REQUEST_CODE_PARENT_NEW_SEARCH_PLACES);
                 break;
             case R.id.userDetails:
-                App.openFragmentAsParent(this, new FragmentUserDetails());
+                FragmentUserDetails fragmentUserDetail  = new FragmentUserDetails();
+                fragmentUserDetail.setUserDetail(App.usersCollections.getCurrentlyLoggedInUser());
+                fragmentUserDetail.show(getSupportFragmentManager(), "User Detail");
                 break;
         }
     }
@@ -132,8 +141,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("callback from parent (y)");
         switch(requestCode){
-            case Configurations.REQUEST_CODE_PARENT_NEW_SEARCH_ACTIVITIY:
+            case Configurations.REQUEST_CODE_PARENT_NEW_SHOUT_DETAIL:
 
+                break;
+            case Configurations.REQUEST_CODE_PARENT_NEW_SEARCH_PLACES:
+                if(data != null) {
+                    String location = data.getStringExtra(Configurations.REQUEST_STRING_NEW_SEARCH_PLACE_ID);
+                    LatLng latLng = MapUtils.getLatLngFromString(location);
+                    MapUtils.animateMapViewToCoordinates(
+                            ((FragmentMaps) getSupportFragmentManager().getFragments().get(Configurations.MAPS_TAB_ID)).getGoogleMap()
+                            , latLng
+                    );
+                }
                 break;
 
             case Configurations.REQUEST_CODE_PARENT_NEW_SHOUT_ACTIVITIY:
@@ -150,14 +169,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * @param newShoutIdStr
      */
     public void updateMapAndListFeed(String newShoutIdStr){
-        int newShoutId = Integer.parseInt(newShoutIdStr);
-        Shout newShout = App.shoutsCollections.getShoutById(newShoutId);
-        System.out.println("Update Map And Feed with new Shout .. " + newShout.getId() + " " + newShout.getContent());
+        Shout newShout = ShoutsUtils.getShoutById(newShoutIdStr);
 
+        // update the listview on data changed
+        ((FragmentFeed)(getSupportFragmentManager().getFragments().get(Configurations.FEED_TAB_ID))).onDataChangedListView();
         // update list view in the user's list
         mSectionsPagerAdapter.notifyDataSetChanged();
-//        MapUtils.updateMap();
-//        this.getSupportFragmentManager().
+
+        //add marker to the app
+        ((FragmentMaps)(getSupportFragmentManager().getFragments().get(Configurations.MAPS_TAB_ID))).addShoutMarker(newShout);
+
         RequestCallback apiCallback = new RequestCallback() {
             @Override
             public void onRequestComplete(String result) {
@@ -167,6 +188,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         // download app data with the related callback
-        ApiUtils.uploadNewJsonObject(apiCallback, newShout.toJSON());
+        ApiUtils.uploadNewJsonObject(apiCallback, newShout != null ? newShout.toJSON() : null);
     }
 }

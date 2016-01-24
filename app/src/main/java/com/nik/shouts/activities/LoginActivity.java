@@ -177,6 +177,8 @@ public class LoginActivity extends Activity implements View.OnClickListener  {
                 // read login credentials
                 String usernameEditText = ((EditText) findViewById(R.id.usernameEditText)).getText().toString();
                 String passwordEditText = ((EditText) findViewById(R.id.passwordEditText)).getText().toString();
+                usernameEditText = "yas";
+                passwordEditText = "qqq";
                 // check user credentials here
                 boolean resultLogin = Authorization.checkCredentials(usernameEditText, passwordEditText);
                 if (! resultLogin ) {

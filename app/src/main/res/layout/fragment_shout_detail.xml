@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
+    tools:context=".activities.NewShoutActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/titleAndDescLayout">
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/titleEditText"
+
+                    android:layout_gravity="center_horizontal"
+                    android:theme="@style/RedEditTextTheme"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="30sp"
+                    android:textColorHint="@color/colorPrimaryLight"
+                    android:hint="Title"
+                    android:editable="false"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="50dp"
+                    android:textIsSelectable="false" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/descriptionEditText"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="13sp"
+                    android:textColorHint="@color/colorPrimaryLight"
+                    android:hint="Description"
+                    android:lines="4"
+                    android:theme="@style/RedEditTextTheme"
+                    android:editable="false"
+                    android:textIsSelectable="false"/>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_alignParentBottom="false"
+                android:id="@+id/dateAndTimeLayout"
+                android:layout_below="@+id/titleAndDescLayout"
+                android:layout_marginTop="8dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/clockDateImg"
+                    android:src="@mipmap/ic_schedule_black_24dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerVertical="true" />
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dateEditText"
+                    android:lines="1"
+                    android:editable="false"
+                    android:layout_weight="1"
+                    android:text="Thu, 2 June 2016"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorPrimary"
+                    android:theme="@style/RedEditTextTheme"
+                    android:layout_marginLeft="52dp"
+                    android:layout_marginRight="100dp"
+                    android:layout_alignParentEnd="false" />
+
+                <EditText
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/timeEditText"
+                    android:lines="1"
+                    android:layout_weight="1"
+                    android:text="01:30"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/colorPrimary"
+                    android:theme="@style/RedEditTextTheme"
+                    android:editable="false"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:gravity="center_horizontal"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:id="@+id/limitOfPeopleLayout"
+                android:layout_below="@+id/dateAndTimeLayout">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/limitPeopleImg"
+                    android:src="@android:drawable/ic_lock_idle_lock"
+                    android:layout_marginLeft="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerVertical="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Limit of People"
+                    android:id="@+id/limitPeopleTextView"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="14sp"
+                    android:editable="false"
+                    android:layout_weight="0.5"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:layout_marginLeft="52dp" />
+
+                <EditText
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/limitPeopleEditText"
+                    android:lines="1"
+                    android:text="10"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="14sp"
+                    android:textAlignment="center"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:theme="@style/RedEditTextTheme"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginRight="20dp"
+                    android:editable="false" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:id="@+id/inviteFriendsLayout"
+                android:layout_below="@+id/limitOfPeopleLayout">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/inviteFriendsImg"
+                    android:src="@mipmap/ic_account_circle_black_24dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerVertical="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Participation"
+                    android:id="@+id/invitePeopleTextView"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="14sp"
+                    android:layout_weight="0.5"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:layout_marginLeft="52dp" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/inviteFriendsEditText"
+                    android:lines="2"
+                    android:text=""
+                    android:hint="Search for a friend"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:theme="@style/RedEditTextTheme"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_toRightOf="@+id/invitePeopleTextView"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_alignParentRight="true"
+                    android:editable="false" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:id="@+id/hashtags"
+                android:layout_below="@+id/inviteFriendsLayout">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:id="@+id/hashtagsImg"
+                    android:src="@android:drawable/ic_dialog_info"
+                    android:layout_marginLeft="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="16dp"
+                    android:layout_centerVertical="true" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hashtags"
+                    android:id="@+id/hashtagsTextView"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="14sp"
+                    android:layout_weight="0.5"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/colorPrimaryLight"
+                    android:layout_marginLeft="52dp" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/hashtagsEditText"
+                    android:lines="2"
+                    android:text="#football, #hashtags"
+                    android:layout_gravity="center_vertical"
+                    android:textSize="14sp"
+                    android:layout_centerVertical="true"
+                    android:theme="@style/RedEditTextTheme"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_toRightOf="@+id/hashtagsTextView"
+                    android:editable="false" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

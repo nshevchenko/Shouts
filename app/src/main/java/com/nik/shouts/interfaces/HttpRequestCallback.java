@@ -70,14 +70,14 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
 
 //                  buffer json data here
                     while ((inputLine = br.readLine()) != null) {
-                        System.out.println("line " + inputLine);
+//                        System.out.println("line " + inputLine);
                         result += inputLine;
                     }
                     br.close();
                     connection.disconnect();
                     break;
                 case "POST":
-                    connection =  (HttpURLConnection)url.openConnection();
+                    connection = (HttpURLConnection)url.openConnection();
                     connection.setRequestMethod("POST");
                     connection.setDoOutput(true);
                     connection.setConnectTimeout(5000);
@@ -103,7 +103,6 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
                         System.out.println(inputLine);
                         result += inputLine;
                     }
-
                     br.close();
                     connection.disconnect();
                     break;

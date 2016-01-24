@@ -1,44 +1,51 @@
 package com.nik.shouts.fragments;
 
 import android.Manifest;
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.LocationListener;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
+import android.view.ViewGroupOverlay;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import com.nik.shouts.R;
 import com.nik.shouts.activities.MainActivity;
 import com.nik.shouts.models.App;
+import com.nik.shouts.models.Shout;
 import com.nik.shouts.utils.Configurations;
 import com.nik.shouts.utils.MapUtils;
 
-import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Created by nik on 26/10/15.
  */
 
-public class FragmentMaps extends Fragment implements View.OnClickListener, LocationListener {
+public class FragmentMaps extends Fragment implements View.OnClickListener, LocationListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+
+
+//    private List<Overlay> mapOverlays;
 
     private LocationManager locationManager;
     private MapView mapView;
     private GoogleMap googleMap;
 
+    // connection
     public static FragmentMaps newInstance(int page, String title) {
         FragmentMaps fragmentMaps = new FragmentMaps();
         return fragmentMaps;
@@ -54,63 +61,54 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Loca
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_maps, container, false);
         setUpGoogleMap(rootView, savedInstanceState);
+        addShoutsMarkers(App.shoutsCollections.getShouts());
         findElements(rootView);
         updateMyLocation();
         return rootView;
     }
 
-    //
-    // set up google map view
-    //
+    /**
+     * Set up google map view
+     * @param rootView
+     * @param savedInstanceState
+     */
     private void setUpGoogleMap(View rootView, Bundle savedInstanceState){
         mapView = (MapView) rootView.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+        System.out.println("settin up");
         googleMap = MapUtils.initGoogleMap(mapView, getActivity());
     }
 
-    //
-    // Activate location button
-    //
-    private void findElements(View rootView){
-        FloatingActionButton myLocationButton = (FloatingActionButton) rootView.findViewById(R.id.mylocation);
-        myLocationButton.setOnClickListener(this);
+    private void addShoutsMarkers(ArrayList<Shout> shouts){
+        googleMap.setOnMarkerClickListener(this);
+        for(Shout shout: shouts) {
+            if(shout.getLatLng() != null) {
+                addShoutMarker(shout);
+            }
+        }
     }
 
+    public void addShoutMarker(Shout shout){
+        Marker shoutMarker = googleMap.addMarker(new MarkerOptions()
+                .position(shout.getLatLng())
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+        shout.setShoutMarker(shoutMarker);
+    }
 
     @Override
     public void onResume() {
-
-//        mapView.getLayoutParams().height = ActionBar.LayoutParams.FILL_PARENT;
-//        mapView.getLayoutParams().width = ActionBar.LayoutParams.FILL_PARENT;
-//        mapView.invalidate();
-//        mapView.requestLayout();
+        mapView.onResume();
         super.onResume();
     }
 
-    public void hideStupidMaps() {
-
-    }
-
-    @Override
-    public void onPause(){
-
-        System.out.println("paused, map off");
-//        hideStupidMaps();
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-//        hideStupidMaps();
-        System.out.println("destroy");
-//        mapView.onDestroy();
-        super.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        mapView.onLowMemory();
-        super.onLowMemory();
+    /**
+     * Activate location button
+     * @param rootView
+     */
+    private void findElements(View rootView){
+        FloatingActionButton myLocationButton = (FloatingActionButton) rootView.findViewById(R.id.mylocation);
+        myLocationButton.setOnClickListener(this);
     }
 
     // LISTENERS
@@ -207,5 +205,34 @@ public class FragmentMaps extends Fragment implements View.OnClickListener, Loca
             Log.d("TAG", "SE CAUGHT");
             se.printStackTrace();
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+//        googleMap.addMarker(new MarkerOptions().position());
+    }
+
+    /**
+     * Show detail screen
+     * @param marker
+     * @return
+     */
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Shout clickedShout = MapUtils.getShoutByMarker(marker);
+        FragmentShoutDetail fragmentShoutDetail = new FragmentShoutDetail();
+        fragmentShoutDetail.setShoutDetail(clickedShout);
+        fragmentShoutDetail.show(getFragmentManager(), "Shout Details");
+        return false;
+    }
+
+    /**
+     * get google map
+     * @return
+     */
+    public GoogleMap getGoogleMap() {
+        return googleMap;
     }
 }

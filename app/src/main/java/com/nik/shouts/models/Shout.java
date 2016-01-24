@@ -1,5 +1,7 @@
 package com.nik.shouts.models;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.nik.shouts.utils.ApiUtils;
 import com.nik.shouts.utils.Configurations;
 import com.nik.shouts.utils.UserUtils;
@@ -32,6 +34,9 @@ public class Shout {
     private int participationLimit;
     private String locationCoordinates;
     private String[] hashtags;
+
+    // dynamic
+    private Marker shoutMarker = null;
 
     /**
      * Create shout from a jsonObject and parse its json
@@ -202,8 +207,17 @@ public class Shout {
         }
     }
 
-
-
+    public LatLng getLatLng(){
+        if(getLocationCoordinates() == null)
+            return null;
+        String[] latlngStr = getLocationCoordinates().split(",");
+        if(latlngStr.length == 0 )
+            return null;
+        double lat = Double.parseDouble(latlngStr[0]);
+        double lng = Double.parseDouble(latlngStr[1]);
+        LatLng latLng = new LatLng(lat, lng);
+        return latLng;
+    }
     /**
      * Add a new participant ID to this shout
      * @param user
@@ -214,8 +228,24 @@ public class Shout {
 
     // GETTERS
 
+    public void setShoutMarker(Marker marker){
+        this.shoutMarker = marker;
+    }
+
+    /**
+     * Find how many users can still participate to the shout
+     * @return
+     */
+    public int getParticipationLeft(){
+        int participationLeft = getParticipationLimit() - participationsIDs.size();
+        if(participationLeft <=  0)
+            return 0;
+        return participationLeft;
+    }
 
     public String getHashtagsAsString(){
+        if(hashtags == null)
+            return "";
         if(hashtags.length == 0)
             return "";
         String result = "";
@@ -225,10 +255,28 @@ public class Shout {
         return result;
     }
 
-    public String getDateStrShout() {
+
+    public String getDateAsStringInList() {
         if(date == null)
             return "...";
         return Configurations.DATE_FORMAT_SHOUT_CREATION_USER.format(date.getTime());
+    }
+
+    public String getTimeAsString(){
+        if(getDate() == null)
+            return null;
+        return Configurations.TIME_FORMAT_DB.format(getDate().getTime());
+    }
+
+    public String getParticipationsAsString(){
+        String result = "";
+        for(User user : App.usersCollections.getUsers()){
+            if(getParticipationsIDs().contains(user.getId()))
+                result += user.getName() + ", ";
+        }
+        if(result.length() > 0)
+            result.substring(0, result.length() - 2);
+        return result;
     }
 
     public ArrayList<String> getParticipationsIDs() {
@@ -260,4 +308,8 @@ public class Shout {
     public String getLocationCoordinates() { return locationCoordinates; }
 
     public String[] getHashtags(){  return hashtags; }
+
+    public Marker getMarker() { return shoutMarker;}
+
 }
+

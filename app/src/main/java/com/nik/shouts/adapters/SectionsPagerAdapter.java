@@ -28,10 +28,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
         switch (position) {
-            case 0:
-                return FragmentMaps.newInstance(0, Configurations.TABS[0]);
-            case 1:
-                return FragmentFeed.newInstance(1, Configurations.TABS[1]);
+            case Configurations.MAPS_TAB_ID:
+                return FragmentMaps.newInstance(Configurations.MAPS_TAB_ID, Configurations.TABS[Configurations.MAPS_TAB_ID]);
+            case Configurations.FEED_TAB_ID:
+                return FragmentFeed.newInstance(Configurations.FEED_TAB_ID, Configurations.TABS[Configurations.FEED_TAB_ID]);
             default:
                 return null;
         }

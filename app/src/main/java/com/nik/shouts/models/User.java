@@ -64,12 +64,16 @@ public class User {
     public String getInterestsAsString() {
         String interestsStr = "";
 
+        if(interests == null)
+            return "";
+
         if(interests.length == 0)
             return "";
 
-        for(int i = 0; i < interests.length; i++){
+        for(int i = 0; i < interests.length - 1; i++){
             interestsStr += interests[i] + ", ";
         }
+        interestsStr += interests[interests.length - 1]; // add last element without coma
         return interestsStr;
     }
 
@@ -240,6 +244,7 @@ public class User {
             }
             String interestsStr = jsonObj.getString("interests");
             interests = interestsStr.split(",");
+
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (ParseException e) {

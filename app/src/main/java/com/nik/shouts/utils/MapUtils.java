@@ -19,7 +19,10 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.nik.shouts.models.App;
 import com.nik.shouts.models.Place;
+import com.nik.shouts.models.Shout;
 
 import java.io.ByteArrayOutputStream;
 
@@ -41,6 +44,18 @@ public class MapUtils {
     public static LatLng getLatLngFromLocation(Location location){
         double lat =  location.getLatitude();
         double lng = location.getLongitude();
+        return new LatLng(lat, lng);
+    }
+
+    /**
+     * Get Latitude and Longitude Objecvt from a location string
+     * @param location
+     * @return
+     */
+    public static LatLng getLatLngFromString(String location){
+        String[] latLngStr = location.split(",");
+        double lat =  Double.parseDouble(latLngStr[0]);
+        double lng = Double.parseDouble(latLngStr[1]);
         return new LatLng(lat, lng);
     }
 
@@ -117,11 +132,25 @@ public class MapUtils {
         }
     }
 
+    /**
+     * Get String from bitmap
+     * @param bitmap
+     * @return
+     */
     public static String bitmapToString(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
         byte[] b = baos.toByteArray();
         return Base64.encodeToString(b, Base64.DEFAULT);
     }
+
+    public static Shout getShoutByMarker(Marker marker){
+        for(Shout shout : App.shoutsCollections.getShouts()){
+            if(shout.getMarker().equals(marker))
+                return shout;
+        }
+        return null;
+    }
+
 
 }

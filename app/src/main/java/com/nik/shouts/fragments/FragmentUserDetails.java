@@ -1,5 +1,6 @@
 package com.nik.shouts.fragments;
 
+import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,12 +23,27 @@ import org.w3c.dom.Text;
  * Created by nik on 13/12/15.
  */
 
-public class FragmentUserDetails extends Fragment {
+public class FragmentUserDetails extends DialogFragment {
 
+    // user to show on the detail screen
+    private User user;
+
+    // Fragments icons to be read and validated
+    private int[] fragments_icons = {
+            R.id.clockDateImg,
+            R.id.limitPeopleImg,
+            R.id.inviteFriendsImg,
+            R.id.hashtagsImg
+    };
 
     public static FragmentUserDetails newInstance() {
         FragmentUserDetails fragmentUserDetails = new FragmentUserDetails();
         return fragmentUserDetails;
+    }
+
+
+    public void setUserDetail(User user){
+        this.user = user;
     }
 
     @Override
@@ -38,10 +54,6 @@ public class FragmentUserDetails extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        // read userID
-        String userId = getArguments().getString("userID");
-        User user = UserUtils.getUserById(userId);
 
         // read main rootView containing all elements
         View rootView = inflater.inflate(R.layout.fragment_user_detail, container, false);
@@ -73,8 +85,7 @@ public class FragmentUserDetails extends Fragment {
         tempTextView.setText(user.getSurname());
 
         EditText tempEditText = (EditText)rootView.findViewById(R.id.interestsEditText);
-        tempEditText.setSelected(false);
-        tempTextView.setText(user.getInterestsAsString());
+        tempEditText.setText(user.getInterestsAsString());
     }
 }
 

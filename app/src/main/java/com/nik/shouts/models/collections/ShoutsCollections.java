@@ -62,27 +62,4 @@ public class ShoutsCollections {
         addShout(newShout);
         return newShout;
     }
-
-    /**
-     * Parse shouts initial data json data
-     * @param mainObject
-     * @throws JSONException
-     */
-    public void parseJsonShouts(JSONObject mainObject) throws JSONException {
-        JSONArray users = mainObject.getJSONArray("shouts");
-        for(int i = 0; i < users.length(); i++) {
-            JSONObject jsonObj = users.getJSONObject(i);
-            // create the user and add to app's data
-            createNewShout(jsonObj);
-        }
-    }
-
-    /**
-     * Get Shout by its ID
-     * @param id
-     * @return
-     */
-    public Shout getShoutById(int id){
-        return shouts.get(id);
-    }
 }
