@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.nik.shouts.R;
 import com.nik.shouts.adapters.FeedListAdapter;
 import com.nik.shouts.adapters.UserDetailsLastShoutsListAdapter;
+import com.nik.shouts.models.App;
 import com.nik.shouts.models.User;
 import com.nik.shouts.utils.UserUtils;
 
@@ -27,6 +28,7 @@ public class FragmentUserDetails extends DialogFragment {
 
     // user to show on the detail screen
     private User user;
+    private boolean editable = false;
 
     // Fragments icons to be read and validated
     private int[] fragments_icons = {
@@ -44,6 +46,8 @@ public class FragmentUserDetails extends DialogFragment {
 
     public void setUserDetail(User user){
         this.user = user;
+        if (user.getId().equals(App.usersCollections.getCurrentlyLoggedInUser().getId()))
+            editable = true;
     }
 
     @Override

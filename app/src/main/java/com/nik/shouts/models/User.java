@@ -83,9 +83,11 @@ public class User {
         if(getFriendsIDs().length == 0)
             return "";
 
-        for(int i = 0; i < getFriendsIDs().length; i++){
+        // keep adding items to array
+        for(int i = 0; i < getFriendsIDs().length - 1; i++){
             friendsStr += getFriendsIDs()[i] + ", ";
         }
+        friendsStr += getFriendsIDs()[getFriendsIDs().length - 1];
         return friendsStr;
     }
 
@@ -105,8 +107,10 @@ public class User {
         JSONObject resultJson = new JSONObject();
         try {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("email", getEmail())
-                .put("username", getUsername())
+            jsonObject
+                    .put("email", getEmail())
+                    .put("id", getId())
+                    .put("username", getUsername())
                     .put("password", getPassword())
                     .put("nameAndSurname", getNameAndSurname())
                     .put("friendsIDs", getFriendsIDsAsString())
@@ -231,6 +235,10 @@ public class User {
 
         try {
             id = jsonObj.getString("id");
+
+            if(App.usersCollections.getLastUserDatabaseId() < Integer.parseInt(id))
+                App.usersCollections.setLastUserDatabaseId(Integer.parseInt(id));
+
             password = jsonObj.getString("password");
             username = jsonObj.getString("username");
             email = jsonObj.getString("email");

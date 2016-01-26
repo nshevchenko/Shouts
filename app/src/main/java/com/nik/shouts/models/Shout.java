@@ -1,9 +1,14 @@
 package com.nik.shouts.models;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.nik.shouts.R;
+import com.nik.shouts.interfaces.RequestCallback;
 import com.nik.shouts.utils.ApiUtils;
 import com.nik.shouts.utils.Configurations;
+import com.nik.shouts.utils.Messages;
 import com.nik.shouts.utils.UserUtils;
 
 import org.json.JSONArray;
@@ -45,55 +50,6 @@ public class Shout {
     public Shout(JSONObject jsonObj){
         parseJsonShout(jsonObj);
     }
-    /**
-     * Create shout object with all parameters
-     * @param id
-     * @param title
-     * @param content
-     * @param creatorId
-     * @param createdDt
-     * @param date
-     * @param participationLimit
-     * @param locationName
-     * @param locationCoordinates
-     */
-    public Shout(String id, String title, String content, String creatorId, Calendar createdDt, Calendar date, int participationLimit, String locationName, String locationCoordinates, String[] hashtags) {
-        this.id = id;
-        this.content = content;
-        this.title = title;
-        this.creatorId = creatorId;
-        this.date = date;
-        this.createdDt = createdDt;
-        this.participationLimit = participationLimit;
-        this.locationName = locationName;
-        this.locationCoordinates = locationCoordinates;
-        this.participationsIDs = new ArrayList<>();
-        this.hashtags = hashtags;
-    }
-
-    /**
-     * Create new Shout from user prospective
-     * @param title
-     * @param content
-     * @param creatorId
-     * @param createdDt
-     * @param date
-     * @param participationLimit
-     * @param locationName
-     * @param locationCoordinates
-     */
-    public Shout(String title, String content, String creatorId, Calendar createdDt, Calendar date, int participationLimit, String locationName, String locationCoordinates, String[] hashtags) {
-        this.title = title;
-        this.content = content;
-        this.creatorId = creatorId;
-        this.date = date;
-        this.createdDt = createdDt;
-        this.participationLimit = participationLimit;
-        this.locationName = locationName;
-        this.locationCoordinates = locationCoordinates;
-        this.participationsIDs = new ArrayList<>();
-        this.hashtags = hashtags;
-    }
 
     /**
      * Constructor with all parameters
@@ -119,13 +75,19 @@ public class Shout {
         this.participationLimit = participationLimit;
         this.locationName = locationName;
         this.locationCoordinates = locationCoordinates;
-        this.participationsIDs = new ArrayList<>();
+        this.participationsIDs = participationsIDs;
         this.hashtags = hashtags;
     }
 
     public void parseJsonShout(JSONObject jsonObj){
         try {
             id = jsonObj.getString("id");
+
+            // assign to the collection the last ID of the entry
+            if(App.shoutsCollections.getLastDatabaseId() < Integer.parseInt(id)) {
+                App.shoutsCollections.setLastDatabaseId(Integer.parseInt(id));
+            }
+
             content = jsonObj.getString("content");
             title = jsonObj.getString("title");
 
@@ -133,6 +95,7 @@ public class Shout {
 
             String participationsStr = jsonObj.getString("participationsIDs");
             String[] participations = participationsStr.split(",");
+            Log.d("MES",  "" + participations.length);
             participationsIDs = new ArrayList<>();
             for (String participant : participations)
                 participationsIDs.add(participant);
@@ -189,16 +152,18 @@ public class Shout {
         try {
             JSONObject newShoutJson = new JSONObject();
             newShoutJson.put("title", getTitle())
-            .put("content", getContent())
-            .put("creatorID", getCreatorId())
-            .put("participationsIDs", getParticipationsIDs().toString())
-            .put("date", Configurations.DATE_FORMAT_SHOUT_CREATION_DB.format(getDate().getTime()))
-            .put("create_dt", Configurations.DATE_FORMAT_SHOUT_CREATION_DB.format(getCreatedDt().getTime()))
-            .put("locationCoordinates", getLocationCoordinates())
-            .put("locationName", getLocationName())
-            .put("participationLimit", getParticipationLimit())
+                    .put("id", getId())
+                    .put("content", getContent())
+                    .put("creatorID", getCreatorId())
+                    .put("participationsIDs", getParticipationIDsAsString())
+                    .put("date", Configurations.DATE_FORMAT_SHOUT_CREATION_DB.format(getDate().getTime()))
+                    .put("create_dt", Configurations.DATE_FORMAT_SHOUT_CREATION_DB.format(getCreatedDt().getTime()))
+                    .put("locationCoordinates", getLocationCoordinates())
+                    .put("locationName", getLocationName())
+                    .put("participationLimit", getParticipationLimit())
                     .put("hashtags", getHashtagsAsString());
             resultJson.put("shout", newShoutJson);
+            System.out.println("UPLOAD " +  resultJson.toString());
             return resultJson.toString();
         } catch (JSONException e) {
             // TODO Auto-generated catch block
@@ -222,9 +187,16 @@ public class Shout {
      * Add a new participant ID to this shout
      * @param user
      */
-    public void addNewParticipant(User user){
+    public void addNewParticipant(final User user){
         participationsIDs.add(user.getId());
     }
+
+    public void removeParticipant(User user) {
+        if(user.getId().equals(getCreatorId()))
+            return;
+        participationsIDs.remove(user.getId());
+    }
+
 
     // GETTERS
 
@@ -268,15 +240,43 @@ public class Shout {
         return Configurations.TIME_FORMAT_DB.format(getDate().getTime());
     }
 
+
+    /**
+     * Return string with participations IDs (int)
+     * @return
+     */
+    public String getParticipationIDsAsString(){
+        String result = "";
+        int size = getParticipationsIDs().size();
+        for (int i = 0; i <  size - 1; i++) {
+            result +=  getParticipationsIDs().get(i) + ",";
+        }
+        result += "" + getParticipationsIDs().get(size - 1);
+        return result;
+    }
+
+    /**
+     * Return string with participations user Names (String)
+     * @return
+     */
     public String getParticipationsAsString(){
         String result = "";
-        for(User user : App.usersCollections.getUsers()){
-            if(getParticipationsIDs().contains(user.getId()))
-                result += user.getName() + ", ";
+        int size = getParticipationsIDs().size();
+        for (int i = 0; i <  size - 1; i++) {
+            System.out.println("App : " + App.usersCollections.getUsers().size());
+            User user = UserUtils.getUserById(getParticipationsIDs().get(i));
+            result +=  user.getName() + ", ";
         }
-        if(result.length() > 0)
-            result.substring(0, result.length() - 2);
+        System.out.println("users " + getParticipationsIDs().get(size - 1));
+        result += " " + UserUtils.getUserById(getParticipationsIDs().get(size - 1)).getName();
         return result;
+    }
+
+    public boolean isCurrentUserAParticipant(User user){
+        for(String id : getParticipationsIDs())
+            if(id.equals(user.getId()))
+                return true;
+        return false;
     }
 
     public ArrayList<String> getParticipationsIDs() {

@@ -24,9 +24,11 @@ import com.nik.shouts.fragments.FragmentUserDetails;
 import com.nik.shouts.interfaces.RequestCallback;
 import com.nik.shouts.models.App;
 import com.nik.shouts.models.Shout;
+import com.nik.shouts.models.User;
 import com.nik.shouts.utils.ApiUtils;
 import com.nik.shouts.utils.Configurations;
 import com.nik.shouts.utils.MapUtils;
+import com.nik.shouts.utils.Messages;
 import com.nik.shouts.utils.ShoutsUtils;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -123,12 +125,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(App.usersCollections.getCurrentlyLoggedInUser().getLastKnownCoordinates() != null)
                     App.openActivityAsParent(this, SearchActivity.class, Configurations.REQUEST_CODE_PARENT_NEW_SEARCH_PLACES);
                 break;
-            case R.id.userDetails:
-                FragmentUserDetails fragmentUserDetail  = new FragmentUserDetails();
-                fragmentUserDetail.setUserDetail(App.usersCollections.getCurrentlyLoggedInUser());
-                fragmentUserDetail.show(getSupportFragmentManager(), "User Detail");
+            case R.id.userDetailsImage:
+                openUserDetailsDialog(App.usersCollections.getCurrentlyLoggedInUser());
                 break;
+            case R.id.nameTextView :
+                openUserDetailsDialog(App.usersCollections.getCurrentlyLoggedInUser());
         }
+    }
+
+    /**
+     * open user dialog
+     * @param user
+     */
+    public void openUserDetailsDialog(User user){
+        FragmentUserDetails fragmentUserDetail  = new FragmentUserDetails();
+        fragmentUserDetail.setUserDetail(user);
+        fragmentUserDetail.show(getSupportFragmentManager(), "User Detail");
     }
 
     /**
@@ -170,7 +182,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     public void updateMapAndListFeed(String newShoutIdStr){
         Shout newShout = ShoutsUtils.getShoutById(newShoutIdStr);
-
+        // add new shout to
+        if(newShout.getCreator() != null)
+            newShout.addNewParticipant(newShout.getCreator());
         // update the listview on data changed
         ((FragmentFeed)(getSupportFragmentManager().getFragments().get(Configurations.FEED_TAB_ID))).onDataChangedListView();
         // update list view in the user's list
@@ -182,9 +196,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         RequestCallback apiCallback = new RequestCallback() {
             @Override
             public void onRequestComplete(String result) {
-//                if()
-//                Snackbar snackbar = Snackbar.make(findViewById(R.id.main_content_layout), Messages.DONE_UPLOAD_NEW_SHOUT, Snackbar.LENGTH_SHORT);
-//                snackbar.show();
+                Messages.showSnackBar(findViewById(R.id.main_content), Messages.DONE_UPLOAD_NEW_SHOUT);
             }
         };
         // download app data with the related callback

@@ -4,8 +4,10 @@ import android.util.Log;
 
 import com.nik.shouts.models.App;
 import com.nik.shouts.models.Shout;
+import com.nik.shouts.models.User;
 import com.nik.shouts.utils.ApiUtils;
 import com.nik.shouts.utils.Configurations;
+import com.nik.shouts.utils.UserUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +27,8 @@ import java.util.Date;
 public class ShoutsCollections {
 
     private ArrayList<Shout> shouts;
+
+    private int lastDatabaseId  = 0;
 
     public void init(){
         shouts = new ArrayList<Shout>();
@@ -49,10 +53,20 @@ public class ShoutsCollections {
      * @param locationCoordinates
      * @return
      */
-    public Shout createNewShout(String title, String content, String creatorId, Calendar date, int participationLimit, String locationName, String locationCoordinates, String[] hashtags) {
-        String newShoutID = (shouts.size() - 1) + "";
+    public Shout createNewShout(String title, String content, String creatorId, Calendar date, int participationLimit, ArrayList<String> invitationsIDs, String locationName, String locationCoordinates, String[] hashtags) {
+        String newShoutID = App.shoutsCollections.getLastDatabaseId() + "" + 1;
         Calendar createDt = Calendar.getInstance();
-        Shout newShout = new Shout(newShoutID, title, content, creatorId, createDt, date, participationLimit, locationName, locationCoordinates, hashtags);
+
+        // create participation array
+        ArrayList<String> participationsIDs = new ArrayList<>();
+        participationsIDs.add(creatorId);
+
+        // invite users
+        for (String userId: invitationsIDs){
+            // invite
+        }
+
+        Shout newShout = new Shout(newShoutID, title, content, creatorId, createDt, date, participationLimit, participationsIDs, locationName, locationCoordinates, hashtags);
         addShout(newShout);
         return newShout;
     }
@@ -61,5 +75,14 @@ public class ShoutsCollections {
         Shout newShout = new Shout(jsonObject);
         addShout(newShout);
         return newShout;
+    }
+
+
+    public int getLastDatabaseId() {
+        return lastDatabaseId;
+    }
+
+    public void setLastDatabaseId(int lastDatabaseId) {
+        this.lastDatabaseId = lastDatabaseId;
     }
 }

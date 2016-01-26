@@ -8,15 +8,17 @@
     android:fitsSystemWindows="true"
     tools:context=".activities.NewShoutActivity">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/shoutInfoLayout"
         android:weightSum="1">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/shoutInfoLayout"
+            android:layout_below="@+id/creatorLayout">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -60,7 +62,7 @@
             <RelativeLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="40dp"
                 android:layout_alignParentBottom="false"
                 android:id="@+id/dateAndTimeLayout"
                 android:layout_below="@+id/titleAndDescLayout"
@@ -113,7 +115,7 @@
             <RelativeLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="40dp"
                 android:id="@+id/limitOfPeopleLayout"
                 android:layout_below="@+id/dateAndTimeLayout">
 
@@ -161,14 +163,14 @@
             <RelativeLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:id="@+id/inviteFriendsLayout"
+                android:layout_height="40dp"
+                android:id="@+id/participationsLayout"
                 android:layout_below="@+id/limitOfPeopleLayout">
 
                 <ImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:id="@+id/inviteFriendsImg"
+                    android:id="@+id/participationsImg"
                     android:src="@mipmap/ic_account_circle_black_24dp"
                     android:layout_marginLeft="16dp"
                     android:layout_gravity="center_vertical"
@@ -179,7 +181,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Participation"
-                    android:id="@+id/invitePeopleTextView"
+                    android:id="@+id/participationsTextView"
                     android:layout_gravity="center_vertical"
                     android:textSize="14sp"
                     android:layout_weight="0.5"
@@ -190,17 +192,16 @@
                 <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/inviteFriendsEditText"
+                    android:id="@+id/participationsEditText"
                     android:lines="2"
                     android:text=""
-                    android:hint="Search for a friend"
                     android:layout_gravity="center_vertical"
                     android:textSize="14sp"
                     android:layout_centerVertical="true"
                     android:theme="@style/RedEditTextTheme"
                     android:textColor="@color/colorPrimary"
-                    android:layout_toRightOf="@+id/invitePeopleTextView"
-                    android:layout_marginLeft="16dp"
+                    android:layout_toRightOf="@+id/participationsTextView"
+                    android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:layout_alignParentRight="true"
                     android:editable="false" />
@@ -209,9 +210,9 @@
             <RelativeLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="40dp"
                 android:id="@+id/hashtags"
-                android:layout_below="@+id/inviteFriendsLayout">
+                android:layout_below="@+id/participationsLayout">
 
                 <ImageView
                     android:layout_width="20dp"
@@ -246,15 +247,72 @@
                     android:layout_centerVertical="true"
                     android:theme="@style/RedEditTextTheme"
                     android:textColor="@color/colorPrimary"
-                    android:layout_marginLeft="16dp"
+                    android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:layout_alignParentRight="true"
                     android:layout_toRightOf="@+id/hashtagsTextView"
                     android:editable="false" />
             </RelativeLayout>
+
         </RelativeLayout>
 
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:id="@+id/creatorLayout"
+            android:layout_marginTop="20dp">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="By"
+                android:id="@+id/creatorTextView"
+                android:layout_gravity="center_vertical"
+                android:textSize="14sp"
+                android:editable="false"
+                android:layout_weight="0.5"
+                android:layout_centerVertical="true"
+                android:textColor="@color/colorPrimaryLight"
+                android:layout_marginLeft="32dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:id="@+id/buttonsLayout"
+            android:layout_gravity="top"
+            android:layout_below="@+id/shoutInfoLayout">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Participate"
+                android:id="@+id/participateTextView"
+                android:layout_gravity="center_vertical"
+                android:textSize="14sp"
+                android:layout_weight="0.5"
+                android:textColor="@color/colorPrimaryLight"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="100dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Interested"
+                android:id="@+id/interestedTextView"
+                android:layout_gravity="center_vertical"
+                android:textSize="14sp"
+                android:layout_weight="0.5"
+                android:textColor="@color/colorPrimaryLight"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="20dp" />
+        </RelativeLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>

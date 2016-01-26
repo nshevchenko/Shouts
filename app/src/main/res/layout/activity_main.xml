@@ -39,23 +39,23 @@
             android:text="Mykola"
             android:id="@+id/nameTextView"
             android:layout_gravity="left"
-            android:layout_marginRight="10dp"
-            android:layout_alignParentBottom="true"
+            android:layout_marginRight="40dp"
+            android:layout_alignParentBottom="false"
             android:layout_alignParentEnd="false"
             android:layout_marginBottom="10dp"
             android:layout_alignParentRight="true"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:layout_centerVertical="true" />
 
         <Button
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:id="@+id/userDetails"
+            android:id="@+id/userDetailsImage"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
             android:background="@android:drawable/sym_def_app_icon"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="5dp" />
+            android:layout_alignParentTop="false"
+            android:layout_margin="10dp" />
 
     </RelativeLayout>
 

@@ -44,7 +44,9 @@ import com.nik.shouts.utils.Configurations;
 import com.nik.shouts.utils.MapUtils;
 import com.nik.shouts.utils.Messages;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -133,9 +135,16 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
             tempImageView.getDrawable().setColorFilter(getResources().getColor(R.color.colorPrimaryLight), PorterDuff.Mode.SRC_ATOP);
         }
 
-        for (int i = 0; i < activity_icons.length; i++) {
+        for (int i = 0; i < activity_editText.length; i++) {
             EditText tempEditText = (EditText) findViewById(activity_editText[i]);
-            tempEditText.setOnClickListener(this);
+            tempEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean b) {
+                    if(b) {
+                        onClick(view);
+                    }
+                }
+            });
         }
 
         FloatingActionButton button = (FloatingActionButton) findViewById(R.id.search);
@@ -300,13 +309,23 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
         // creator
         String creatorId = App.usersCollections.getCurrentlyLoggedInUser().getId();
 
+
+        // get invitations
+        tempEditText = (EditText) findViewById(R.id.inviteFriendsEditText);
+        String invitationStr = tempEditText.getText().toString();
+        String[] invitationStringArray = invitationStr.split(","); // split into array
+        ArrayList<String> invitations = new ArrayList<>(); // add to array size
+        for( int i = 0; i < invitationStringArray.length; i++)
+            invitations.add(invitationStringArray[i]);
+
+
         // location
         String locationName = "";
         String locationCoordinates = "";
         if(shoutLocationPlace != null) {
             locationName = shoutLocationPlace.getName().toString();
             locationCoordinates = shoutLocationPlace.getLatLng().latitude + "," + shoutLocationPlace.getLatLng().longitude;
-            System.out.println("Location name : " + locationName + ", /n coordinate: " + shoutLocationPlace.getLatLng().toString());
+//            System.out.println("Location name : " + locationName + ", /n coordinate: " + shoutLocationPlace.getLatLng().toString());
         }
 
         // hashtags
@@ -314,7 +333,7 @@ public class NewShoutActivity extends Activity implements View.OnClickListener {
         String[] hashtags = hashtagsStr.split(",");
         System.out.println("hashtags  " + hashtagsStr);
         return App.shoutsCollections.createNewShout(
-                title, content, creatorId, date, participationLimit, locationName, locationCoordinates, hashtags);
+                title, content, creatorId, date, participationLimit, invitations, locationName, locationCoordinates, hashtags);
     }
 
     /**

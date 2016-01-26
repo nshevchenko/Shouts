@@ -19,6 +19,10 @@ public class UsersCollections {
     private ArrayList<User> users;
     private User currentlyLoggedInUser;
 
+
+    private int lastUserDatabaseId  = 0;
+
+
     public void init(){
         App.usersCollections = this;
         users = new ArrayList<User>();
@@ -40,7 +44,7 @@ public class UsersCollections {
             String friendId = user.getFriendsIDs()[i];
             User friend = UserUtils.getUserById(friendId);
             friends.add(friend);
-            System.out.println("found friend " + user.getUsername());
+//            System.out.println("found friend " + user.getUsername());
         }
         return friends;
     }
@@ -88,4 +92,15 @@ public class UsersCollections {
         User newGuest = new User(newUserID);
         return newGuest;
     }
+
+
+
+    public int getLastUserDatabaseId() {
+        return lastUserDatabaseId;
+    }
+
+    public void setLastUserDatabaseId(int lastUserDatabaseId) {
+        this.lastUserDatabaseId = lastUserDatabaseId;
+    }
+
 }

@@ -33,9 +33,10 @@ public class UserUtils {
      * @return
      */
     public static User getUserById(String ID) {
-        for(User user : App.usersCollections.getUsers())
-            if(user.getId().equals(ID))
+        for(User user : App.usersCollections.getUsers()) {
+            if (user.getId().equals(ID))
                 return user;
+        }
         return null;
     }
 

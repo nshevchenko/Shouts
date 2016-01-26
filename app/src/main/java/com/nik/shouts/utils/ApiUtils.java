@@ -40,12 +40,10 @@ public class ApiUtils {
 
     // HTTP REQUESTS
 
-
     /**
      * GET REQUEST
      * @param apiFinalCallback
      */
-
     public static void getRequestWithCallBack(String url, final RequestCallback apiFinalCallback) {
         // download content
         HttpRequestCallback httpRequest = new HttpRequestCallback(apiFinalCallback, "GET");
@@ -69,7 +67,7 @@ public class ApiUtils {
      */
     public static void uploadNewJsonObject(RequestCallback uploadCallback, String jsonNewObject) {
         HttpRequestCallback httpRequest = new HttpRequestCallback(uploadCallback, "POST", jsonNewObject);
-        httpRequest.execute("http://lionsrace.altervista.org/apiShouts.php");
+        httpRequest.execute(Configurations.REMOTE_SERVER_URL);
     }
 
     public static String getToday(SimpleDateFormat format){
@@ -77,6 +75,11 @@ public class ApiUtils {
         return format.format(todayCalendar.getTime());
     }
 
+    /**
+     * Create URL for Places API textsearch
+     * @param search
+     * @return
+     */
     public static String createUrlForPlaceSearch(String search){
         // get current user last location
         String locationParamter = "";

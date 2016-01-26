@@ -39,8 +39,8 @@ public class UserDetailsLastShoutsListAdapter extends ArrayAdapter<Shout>{
 //        System.out.println(position + " " + shout.getContent());
         if(position % 2 == 1)
         {
-            RelativeLayout bg = (RelativeLayout)convertView.findViewById(R.id.shoutMainContent);
-        	bg.setBackgroundColor(Color.parseColor("#F3F3F3"));
+//            RelativeLayout bg = (RelativeLayout)convertView.findViewById(R.id.shoutMainContent);
+//        	bg.setBackgroundColor(Color.parseColor("#F3F3F3"));
         }
 
         View tempShoutViewObject = (TextView)convertView.findViewById(R.id.username);

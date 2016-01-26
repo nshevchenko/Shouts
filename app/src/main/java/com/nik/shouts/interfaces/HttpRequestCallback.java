@@ -4,7 +4,9 @@ package com.nik.shouts.interfaces;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 
+import com.nik.shouts.utils.Configurations;
 import com.nik.shouts.utils.MapUtils;
 
 import java.io.BufferedInputStream;
@@ -121,7 +123,8 @@ public class HttpRequestCallback extends AsyncTask<String, Void, String>
     @Override
     protected void onPostExecute(String result)
     {
-        System.out.println("RESULT API " + result);
+        if(Configurations.DEBUG == 1)
+            Log.d("MESSAGE HTTP", result);
         requestCallback.onRequestComplete(result);
     }
 }

@@ -1,5 +1,11 @@
 package com.nik.shouts.utils;
 
+import android.app.Activity;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+
+import com.nik.shouts.R;
+
 /**
  * Created by nik on 15/12/15.
  */
@@ -29,5 +35,11 @@ public class Messages {
 
     public static String ERROR_UPLOAD_NEW_SHOUT = "Error uploading your shout";
     public static String DONE_UPLOAD_NEW_SHOUT = "Your new shout is Live!";
+    public static String DONE_ADD_NEW_SHOUT_PARTICIPANT = "Looking foward to see you!";
+    public static String DONE_UPDATE_NEW_SHOUT = "Your shout has been updated";
 
+    public static void showSnackBar(View view, String message ) {
+        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
+        snackbar.show();
+    }
 }
